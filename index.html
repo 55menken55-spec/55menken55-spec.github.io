@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тученция | Творческая студия Розалии</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- SEO-оптимизация (Поисковое продвижение Яндекса и Google) -->
+    <title>Тученция | Творческая студия художника и графического дизайнера Розалии</title>
+    <meta name="description" content="Творческая студия художника и графического дизайнера Розалии (Тученция). Авторские иллюстрации, живопись, акварель, роспись одежды, аквагрим и графический дизайн под заказ.">
+    <meta name="keywords" content="Розалия, Тученция, творческая студия, графический дизайн, заказать иллюстрацию, роспись одежды, аквагрим, живопись, художник Самара">
+    <meta name="author" content="Тученция">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph (Красивые превью-карточки при отправке ссылки в Telegram, VK, WhatsApp) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Тученция | Творческая студия Розалии">
+    <meta property="og:description" content="Авторские иллюстрации, профессиональный графический дизайн, уникальная роспись одежды и живопись на заказ.">
+    <meta property="og:image" content="https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg">
+    <meta property="og:url" content="https://t.me/tychenciya">
+
+    <!-- Предзагрузка критически важных шрифтов и стилей (Снижает показатель LCP) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         html {
             scroll-behavior: smooth;
@@ -27,6 +45,9 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         @font-face {
@@ -141,18 +162,19 @@
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid var(--tuch-lime);
             border-radius: 20px;
-            transition: transform 0.3s;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
             position: relative;
         }
         .card-tuch:hover {
-            transform: scale(1.05);
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .btn-tuch {
             background-color: var(--tuch-purple);
             color: white;
             border-radius: 50px;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             display: inline-block;
         }
         .btn-tuch:hover {
@@ -188,13 +210,13 @@
             color: var(--tuch-dark) !important;
         }
 
-        /* Floating decoration animation */
+        /* Floating decoration animation (Оптимизирована производительность через translate3d) */
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            50% { transform: translate3d(0, -10px, 0); }
         }
-        .float-anim { animation: float 3s ease-in-out infinite; }
-        .float-anim-delay { animation: float 3s ease-in-out 1.5s infinite; }
+        .float-anim { animation: float 3s ease-in-out infinite; will-change: transform; }
+        .float-anim-delay { animation: float 3s ease-in-out 1.5s infinite; will-change: transform; }
 
         @keyframes twinkle {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -216,15 +238,15 @@
             position: fixed;
             inset: 0;
             z-index: 100;
-            background: rgba(20, 22, 28, 0.92);
-            backdrop-filter: blur(6px);
+            background: rgba(20, 22, 28, 0.94);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 24px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
         }
         #lightbox.open {
             opacity: 1;
@@ -237,8 +259,8 @@
             border: 3px solid var(--tuch-lime);
             box-shadow: 0 0 40px rgba(203, 232, 87, 0.25);
             object-fit: contain;
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
+            transform: scale(0.97);
+            transition: transform 0.2s ease;
         }
         #lightbox.open img {
             transform: scale(1);
@@ -257,7 +279,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.25s, transform 0.2s;
+            transition: background 0.2s, transform 0.15s;
             z-index: 2;
             user-select: none;
         }
@@ -279,7 +301,7 @@
             color: rgba(255,255,255,0.8);
             font-size: 14px;
             letter-spacing: 0.05em;
-            background: rgba(0,0,0,0.35);
+            background: rgba(0,0,0,0.45);
             padding: 6px 14px;
             border-radius: 50px;
         }
@@ -288,13 +310,54 @@
             #lightbox-prev { left: 8px; }
             #lightbox-next { right: 8px; }
         }
+
+        /* Стили админки */
+        .admin-badge {
+            background-color: var(--tuch-lime);
+            color: var(--tuch-dark);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        /* Спиннер загрузки */
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--tuch-lime);
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Рамка для редактируемых текстов */
+        .editable-active {
+            outline: 2px dashed var(--tuch-lime);
+            outline-offset: 4px;
+            background: rgba(203, 232, 87, 0.1);
+            cursor: pointer;
+        }
+        .editable-active:hover {
+            background: rgba(203, 232, 87, 0.2);
+        }
     </style>
 </head>
 <body class="theme-tuch">
 
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center backdrop-blur-md">
-        <div class="font-bold text-2xl text-[#CBE857]">ТУЧЕНЦИЯ</div>
+        <div class="font-bold text-2xl text-[#CBE857] flex items-center gap-2">
+            ТУЧЕНЦИЯ
+            <span id="admin-indicator" class="hidden admin-badge">РЕЖИМ АДМИНА</span>
+        </div>
         <!-- Hamburger button -->
         <button id="menu-btn" class="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 focus:outline-none" aria-label="Открыть меню">
             <span class="block w-8 h-0.5 bg-[#CBE857] transition-all duration-300 origin-center"></span>
@@ -335,18 +398,18 @@
                         <div class="rope"></div>
                         <div class="rope"></div>
                     </div>
-                    <span class="font-bold text-lg tracking-wider text-[#323843]">НИКНЕМ: ТУЧЕНЦИЯ!</span>
+                    <span id="hero-banner-text" data-edit-id="hero-banner" class="font-bold text-lg tracking-wider text-[#323843]">НИКНЕМ: ТУЧЕНЦИЯ!</span>
                 </div>
             </div>
 
-            <h1 class="font-marker text-6xl md:text-8xl text-[#CBE857] mb-4">ТУЧЕНЦИЯ</h1>
-            <h2 class="text-2xl md:text-3xl mb-8 opacity-90">ТВОРЧЕСКАЯ СТУДИЯ</h2>
-            <p class="text-xl max-w-2xl mx-auto mb-10 font-light">Розалия — художник и дизайнер. Создаю иллюстрации, акварельные работы и цифровой дизайн для брендов и вдохновения.</p>
+            <h1 id="hero-title" data-edit-id="hero-h1" class="font-marker text-6xl md:text-8xl text-[#CBE857] mb-4">ТУЧЕНЦИЯ</h1>
+            <h2 id="hero-subtitle" data-edit-id="hero-h2" class="text-2xl md:text-3xl mb-8 opacity-90">ТВОРЧЕСКАЯ СТУДИЯ</h2>
+            <p id="hero-desc" data-edit-id="hero-p" class="text-xl max-w-2xl mx-auto mb-10 font-light">Розалия — художник и дизайнер. Создаю иллюстрации, акварельные работы и цифровой дизайн для брендов и вдохновения.</p>
         </div>
 
         <!-- Frog on swing -->
         <div class="absolute bottom-10 left-6 md:left-16 float-anim">
-            <img src="https://i.ibb.co/1t881GSL/res-25.png" alt="Лягушка на качелях" class="w-36 md:w-40 h-auto drop-shadow-lg">
+            <img src="https://i.ibb.co/1t881GSL/res-25.png" alt="Лягушка на качелях" class="w-36 md:w-40 h-auto drop-shadow-lg" loading="eager" width="160">
         </div>
     </section>
 
@@ -358,7 +421,67 @@
         </svg>
 
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-12">ПОРТФОЛИО</h2>
+            <h2 class="text-4xl font-bold text-center mb-6">ПОРТФОЛИО</h2>
+
+            <!-- Admin upload panel (hidden by default) -->
+            <div id="admin-upload-panel" class="hidden mb-12 p-6 rounded-2xl border-2 border-dashed border-[#CBE857] bg-white/5 max-w-2xl mx-auto">
+                <h3 class="text-xl font-bold mb-4 text-[#CBE857] flex items-center gap-2">
+                    <span>☁️ Быстрая загрузка на ImgBB</span>
+                </h3>
+
+                <!-- ImgBB API Key settings -->
+                <div class="mb-4 bg-black/20 p-3 rounded-lg border border-white/10">
+                    <label class="block text-xs mb-1 text-[#C68DFF] font-bold uppercase">Ваш API Ключ ImgBB:</label>
+                    <input type="text" id="imgbb-api-key" placeholder="Вставьте сюда ваш API Key с сайта api.imgbb.com" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#CBE857]">
+                    <span class="text-[10px] text-white/50 mt-1 block">
+                        Чтобы получить бесплатный ключ: зайдите на <a href="https://api.imgbb.com/" target="_blank" class="underline text-[#CBE857]">api.imgbb.com</a>, войдите/зарегистрируйтесь и нажмите <b>"Получить API ключ"</b>. Наш сайт сохранит его локально в вашем браузере.
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm mb-1 opacity-80">Выберите категорию:</label>
+                        <select id="admin-new-cat" class="w-full bg-[#323843] border border-[#CBE857]/50 rounded-lg p-2 text-white focus:outline-none focus:border-[#CBE857]">
+                            <option value="Иллюстрация">Иллюстрация</option>
+                            <option value="Живопись">Живопись</option>
+                            <option value="Дизайн">Дизайн</option>
+                            <option value="Роспись одежды">Роспись одежды</option>
+                            <option value="Аквагрим">Аквагрим</option>
+                            <option value="Фотография">Фотография</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1 opacity-80">Как добавить изображение?</label>
+                        <select id="upload-method" onchange="toggleUploadMethod()" class="w-full bg-[#323843] border border-[#CBE857]/50 rounded-lg p-2 text-white focus:outline-none focus:border-[#CBE857]">
+                            <option value="file">Загрузить файл и отправить в облако ImgBB</option>
+                            <option value="url">Вставить уже готовую ссылку (вручную)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Method File (ImgBB Auto-Upload) -->
+                <div id="method-file-container" class="mb-4">
+                    <label class="block text-sm mb-1 opacity-80">Выберите файл изображения:</label>
+                    <input type="file" id="admin-new-file" accept="image/*" class="w-full text-white/80 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#C68DFF] file:text-white hover:file:bg-[#CBE857] hover:file:text-[#323843]">
+                    <span class="text-xs text-white/50 mt-1 block">Файл будет автоматически отправлен на ImgBB.com, а полученная прямая ссылка мгновенно сохранится в ваше портфолио!</span>
+                </div>
+
+                <!-- Method URL -->
+                <div id="method-url-container" class="hidden mb-4">
+                    <label class="block text-sm mb-1 opacity-80">Прямая ссылка на картинку (URL):</label>
+                    <input type="text" id="admin-new-url" placeholder="https://i.ibb.co/.../image.jpg" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-white focus:outline-none focus:border-[#CBE857]">
+                </div>
+
+                <!-- Loader Spinner -->
+                <div id="upload-loader-container" class="hidden items-center gap-2 mb-4 bg-[#CBE857]/10 p-3 rounded-lg border border-[#CBE857]/30 text-sm">
+                    <div class="loader"></div>
+                    <span class="text-[#CBE857] font-semibold animate-pulse">Идёт загрузка в облако ImgBB, пожалуйста, подождите...</span>
+                </div>
+
+                <div class="flex gap-3 justify-end">
+                    <button onclick="addNewPortfolioItem()" class="btn-tuch px-6 py-2 text-sm font-bold uppercase">Добавить в портфолио</button>
+                </div>
+            </div>
             
             <div id="port-filters" class="flex flex-wrap justify-center gap-4 mb-12">
                 <!-- Filters will be injected by JS -->
@@ -374,6 +497,11 @@
         </div>
     </section>
 
+    <!-- Hidden input for replacement dialog with auto ImgBB upload -->
+    <input type="file" id="replace-file-input" class="hidden" accept="image/*">
+    <!-- Скрытый инпут для замены картинок в разделе Магазин -->
+    <input type="file" id="replace-shop-file-input" class="hidden" accept="image/*">
+
     <!-- Lightbox (просмотр картинок) -->
     <div id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения">
         <button id="lightbox-close" class="lightbox-btn" aria-label="Закрыть">&times;</button>
@@ -387,7 +515,7 @@
     <section id="services" class="py-20 px-6 relative">
         <!-- Decorative banner -->
         <div class="text-center mb-6">
-            <img src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Мои навыки" class="inline-block w-64 md:w-80 h-auto" style="mix-blend-mode: screen;">
+            <img src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Мои навыки" class="inline-block w-64 md:w-80 h-auto" style="mix-blend-mode: screen;" loading="lazy">
         </div>
         <!-- Decorative stars -->
         <svg class="star-burst top-20 left-8 twinkle" width="28" height="28" viewBox="0 0 40 40" fill="none" style="animation-delay:0.7s">
@@ -411,6 +539,32 @@
         <div class="max-w-6xl mx-auto">
             <h2 class="text-4xl font-bold text-center mb-4">МАГАЗИН</h2>
             <p class="text-center opacity-80 mb-12 max-w-2xl mx-auto">Доставка не входит в стоимость товара и оплачивается отдельно (СДЭК, Почта России). Стоимость рассчитывается при оформлении заказа.</p>
+            
+            <!-- Панель добавления товара в Магазин (видят только админы) -->
+            <div id="admin-shop-panel" class="hidden mb-12 p-6 rounded-2xl border-2 border-dashed border-[#C68DFF] bg-white/5 max-w-2xl mx-auto text-left">
+                <h3 class="text-xl font-bold mb-4 text-[#C68DFF] flex items-center gap-2">
+                    <span>🛍️ Добавить товар в Магазин</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm mb-1 opacity-80">Название товара:</label>
+                        <input type="text" id="shop-new-name" placeholder="Например: Авторский стикерпак" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-white focus:outline-none focus:border-[#C68DFF]">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1 opacity-80">Цена товара:</label>
+                        <input type="text" id="shop-new-price" placeholder="Например: 1 500 ₽" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-white focus:outline-none focus:border-[#C68DFF]">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm mb-1 opacity-80">Фотография товара:</label>
+                    <input type="file" id="shop-new-file" accept="image/*" class="w-full text-white/80 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#CBE857] file:text-[#323843] hover:file:bg-[#C68DFF] hover:file:text-white">
+                    <span class="text-xs text-white/50 mt-1 block">Изображение товара автоматически загрузится в облако ImgBB!</span>
+                </div>
+                <div class="flex justify-end">
+                    <button onclick="addNewShopItem()" class="btn-tuch px-6 py-2 text-sm font-bold uppercase">Добавить в магазин</button>
+                </div>
+            </div>
+
             <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Shop items will be injected by JS -->
             </div>
@@ -427,7 +581,7 @@
                     <div class="rope" style="height:18px; margin-left:40px"></div>
                     <div class="rope" style="height:18px; margin-left:40px"></div>
                 </div>
-                <span class="font-bold text-md tracking-wider text-[#323843]">ПРИВЕТСТВУЮ! МЕНЯ ЗОВУТ РОЗАЛИЯ, Я — ГРАФИЧЕСКИЙ ДИЗАЙНЕР / ХУДОЖНИК</span>
+                <span id="about-banner-text" data-edit-id="about-banner" class="font-bold text-md tracking-wider text-[#323843]">ПРИВЕТСТВУЮ! МЕНЯ ЗОВУТ РОЗАЛИЯ, Я — ГРАФИЧЕСКИЙ ДИЗАЙНЕР / ХУДОЖНИК</span>
             </div>
         </div>
 
@@ -446,13 +600,13 @@
                     <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
                 </svg>
                 <!-- ВСТАВЬТЕ СЮДА ССЫЛКУ НА ФОТО В АТРИБУТ src -->
-                <img id="about-img" src="https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg" alt="Rozaliya" class="w-full h-auto">
+                <img id="about-img" src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Rozaliya" class="w-full h-auto" loading="lazy">
             </div>
             <div class="w-full md:w-1/2 text-left relative">
                 <!-- Decorative frame behind text -->
-                <img src="https://i.ibb.co/sJ1rc7vs/res-19.png" alt="" class="absolute -inset-8 w-[calc(100%+4rem)] h-[calc(100%+4rem)] object-contain opacity-30 pointer-events-none">
-                <h2 class="text-4xl font-bold mb-6">Обо мне</h2>
-                <p class="text-lg leading-relaxed mb-6">
+                <img src="https://i.ibb.co/sJ1rc7vs/res-19.png" alt="" class="absolute -inset-8 w-[calc(100%+4rem)] h-[calc(100%+4rem)] object-contain opacity-30 pointer-events-none" loading="lazy">
+                <h2 id="about-title" data-edit-id="about-h2" class="text-4xl font-bold mb-6">Обо мне</h2>
+                <p id="about-desc" data-edit-id="about-p" class="text-lg leading-relaxed mb-6">
                     Привет! Я Розалия. Моя страсть — создание уникальных рисунков, одежды и аксессуаров в собственном стиле с элементами ручной работы. Опыт в иллюстрации и дизайне более 5 лет. Умею сочетать эстетику и смысл.
                 </p>
                 <a href="https://t.me/tychenciya" target="_blank" class="btn-tuch px-8 py-3 font-bold inline-block">Связаться в Telegram</a>
@@ -468,117 +622,111 @@
 
         <!-- Frog decoration -->
         <div class="absolute bottom-4 right-4 md:right-16 opacity-90 float-anim">
-            <img src="https://i.ibb.co/hFQp7tCk/res-22.png" alt="Лягушка" class="w-24 md:w-32 h-auto drop-shadow-lg" style="mix-blend-mode: screen;">
+            <img src="https://i.ibb.co/hFQp7tCk/res-22.png" alt="Лягушка" class="w-24 md:w-32 h-auto drop-shadow-lg" style="mix-blend-mode: screen;" loading="lazy">
         </div>
 
         <div class="max-w-2xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-8">КОНТАКТЫ</h2>
-            <p class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
+            <h2 id="contact-title" data-edit-id="contact-h2" class="text-4xl font-bold text-center mb-8">КОНТАКТЫ</h2>
+            <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="tychenciya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition">tychenciya779@gmail.com</a>
+                <a href="mailto:tychenciya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition">tychenciya779@gmail.com</a>
             </div>
         </div>
     </section>
 
     <footer class="py-10 text-center opacity-50 text-sm relative">
-        <svg class="star-burst bottom-2 right-8 twinkle" width="20" height="20" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s">
-            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF" opacity="0.6"/>
+        <!-- Секретный триггер: фиолетовая звездочка в самом низу справа. При нажатии активирует вход в админку! -->
+        <svg id="admin-secret-star" onclick="toggleAdminMode()" class="star-burst bottom-4 right-8 twinkle cursor-pointer hover:scale-125 transition-transform" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s; pointer-events: auto;">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF" opacity="0.8"/>
         </svg>
         <p>&copy; 2026 Тученция. Создано с любовью к искусству.</p>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        /* 
-           ============================================
-           КАК ЗАГРУЖАТЬ СВОИ КАРТИНКИ (ИНСТРУКЦИЯ)
-           ============================================
-           
-           1. Загрузите картинку на Imgur (imgur.com) или Cloudinary (cloudinary.com).
-           2. Получите прямую ссылку на изображение (URL, который заканчивается на .jpg, .png и т.д.).
-           3. Вставьте эту ссылку вместо текста "https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg" ниже.
-           
-           Пример для Imgur:
-           - Загружаете картинку → нажимаете на неё → ПКМ → "Копировать адрес изображения".
-           - Вставляете сюда между кавычками.
-        */
+    <script>
+        // Начальный (дефолтный) список картинок портфолио
+        const defaultPortfolioItems = [
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg' },
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/dJDjxcmK/photo-2023-09-14-05-49-17.jpg' },
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/TqqjgBmX/photo-2024-02-14-00-31-25.jpg' },
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/Q7fSFSTC/image.jpg' },
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/rfGfJCG1/photo-2023-04-02-20-26-16.png' },
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/Ld7md4Y8/photo-2023-08-04-19-50-39.png' },
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png' },
+            { category: 'Иллюстрация', img: 'https://i.ibb.co/PGt6FTYv/photo-2023-09-12-00-21-47.jpg' },
 
-        // Функция-хелпер: добавить любое количество фото в одну категорию
-        function addWorks(category, ...urls) {
-            return urls.map(url => ({ category, img: url }));
-        }
+            { category: 'Живопись', img: 'https://i.ibb.co/Z6QLH265/photo-4-2025-12-14-22-00-00.png' },
+            { category: 'Живопись', img: 'https://i.ibb.co/mCcyNf8N/photo-2025-12-14-15-07-47.png' },
+            { category: 'Живопись', img: 'https://i.ibb.co/0VFbQVhd/photo-2025-12-14-21-54-27.png' },
+            { category: 'Живопись', img: 'https://i.ibb.co/HpG0ZR1W/photo-1-2025-12-14-22-00-00.png' },
+            { category: 'Живопись', img: 'https://i.ibb.co/3YLQLg6j/photo-1-2026-03-20-09-18-30.jpg' },
+            { category: 'Живопись', img: 'https://i.ibb.co/tgNzG2K/photo-2-2025-12-14-22-00-00.png' },
+            { category: 'Живопись', img: 'https://i.ibb.co/Dsh7Q3b/photo-3-2025-12-14-22-00-00.png' },
 
-        const portfolioItems = [
-            ...addWorks('Иллюстрация',
-               'https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg',
-               'https://i.ibb.co/dJDjxcmK/photo-2023-09-14-05-49-17.jpg',
-               'https://i.ibb.co/TqqjgBmX/photo-2024-02-14-00-31-25.jpg',
-               'https://i.ibb.co/Q7fSFSTC/image.jpg',
-               'https://i.ibb.co/rfGfJCG1/photo-2023-04-02-20-26-16.png',
-               'https://i.ibb.co/Ld7md4Y8/photo-2023-08-04-19-50-39.png',
-               'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png',
-               'https://i.ibb.co/PGt6FTYv/photo-2023-09-12-00-21-47.jpg'
-            ),
-            ...addWorks('Живопись',
-               'https://i.ibb.co/Z6QLH265/photo-4-2025-12-14-22-00-00.png',
-               'https://i.ibb.co/mCcyNf8N/photo-2025-12-14-15-07-47.png',
-               'https://i.ibb.co/0VFbQVhd/photo-2025-12-14-21-54-27.png',
-               'https://i.ibb.co/HpG0ZR1W/photo-1-2025-12-14-22-00-00.png',
-               'https://i.ibb.co/3YLQLg6j/photo-1-2026-03-20-09-18-30.jpg',
-               'https://i.ibb.co/tgNzG2K/photo-2-2025-12-14-22-00-00.png',
-               'https://i.ibb.co/Dsh7Q3b/photo-3-2025-12-14-22-00-00.png'
-            ),
-            ...addWorks('Дизайн',
-                'https://i.ibb.co/jv8MWDmV/image.png',
-                'https://i.ibb.co/QFFQcXVK/image.png',
-                'https://i.ibb.co/7tPLZ3HS/image.png',
-                'https://i.ibb.co/4RMJSZy1/image.png',
-                'https://i.ibb.co/gZd73RQ4/image.png',
-                'https://i.ibb.co/VYx6W03f/image.png',
-                'https://i.ibb.co/CpzRY106/image.png',
-                'https://i.ibb.co/tTh8YCTV/1080-1080-px.png',
-                'https://i.ibb.co/VY3vw74Z/Frame-1.png',
-                'https://i.ibb.co/FqYDDTNt/Frame-2.png',
-                'https://i.ibb.co/DP4g3FpJ/Frame-3.png',
-                'https://i.ibb.co/nMCX6KDf/Frame-4.png',
-                'https://i.ibb.co/SXrXnXTn/photo-25-2026-02-01-23-55-13.jpg',
-                'https://i.ibb.co/4ZNGnmXC/photo-2025-07-22-22-17-01.jpg',
-                'https://i.ibb.co/Xrn1YrNc/photo-2026-04-13-21-17-34.jpg',
-                'https://i.ibb.co/wFsbD5Zx/photo-2026-05-24-09-38-59.jpg',
-                'https://i.ibb.co/j9pVWmDX/1080-607-px.png'
-            ),
-            ...addWorks('Роспись одежды',
-                'https://i.ibb.co/rRs6Vbs4/IMG-9533.jpg',
-                'https://i.ibb.co/kVBq53MF/IMG-9535.jpg',
-                'https://i.ibb.co/7xg83R6V/IMG-9537.jpg',
-                'https://i.ibb.co/FkTDbQyg/IMG-9474.jpg',
-                'https://i.ibb.co/Cp3Rx6HK/IMG-9478.jpg',
-                'https://i.ibb.co/b5TYbLD8/IMG-9494.jpg',
-                'https://i.ibb.co/0Vfzv7N4/IMG-9497.jpg',
-                'https://i.ibb.co/27GB7fqJ/IMG-9529.jpg'
-            ),
-            ...addWorks('Аквагрим',
-                'https://i.ibb.co/8gzSkKZc/photo-2026-05-24-09-38-59.jpg',
-                'https://i.ibb.co/VcsZRFCb/IMG-20240115-180128.jpg',
-                'https://i.ibb.co/JRC5KZT0/photo-2024-09-12-13-45-08.jpg'
-            ),
-            ...addWorks('Фотография',
-                'https://i.ibb.co/yFczP9fG/photo-2026-04-25-21-31-28.jpg',
-                'https://i.ibb.co/zWJz9pvk/photo-2026-04-25-21-31-28-2.jpg',
-                'https://i.ibb.co/tPmPxG5y/photo-2026-04-25-21-31-29.jpg',
-                'https://i.ibb.co/NnKq62Mx/photo-2026-04-25-21-31-31.jpg',
-                'https://i.ibb.co/d0TgX3ZC/photo-2026-05-06-21-34-27.jpg',
-                'https://i.ibb.co/hxPwH2Yq/photo-2025-12-08-02-02-46.jpg',
-                'https://i.ibb.co/d0KdKjYp/photo-2025-12-08-02-02-52.jpg',
-                'https://i.ibb.co/7x0pXdMb/photo-2026-03-29-13-52-10.jpg',
-                'https://i.ibb.co/1G4GS8n7/photo-2026-03-29-13-52-14.jpg',
-                'https://i.ibb.co/v5KMvRH/photo-2026-04-12-12-17-42.jpg',
-                'https://i.ibb.co/jZP5fVt6/photo-2026-04-12-12-18-23.jpg',
-                'https://i.ibb.co/4wyD6RXq/photo-2026-04-12-12-18-26.jpg',
-                'https://i.ibb.co/PGj02Bz6/photo-2026-04-25-21-31-27.jpg',
-                'https://i.ibb.co/TD6cpKHv/photo-2026-04-25-21-31-27-2.jpg'
-            ),
+            { category: 'Дизайн', img: 'https://i.ibb.co/jv8MWDmV/image.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/QFFQcXVK/image.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/7tPLZ3HS/image.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/4RMJSZy1/image.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/gZd73RQ4/image.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/VYx6W03f/image.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/CpzRY106/image.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/tTh8YCTV/1080-1080-px.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/VY3vw74Z/Frame-1.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/FqYDDTNt/Frame-2.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/DP4g3FpJ/Frame-3.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/nMCX6KDf/Frame-4.png' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/SXrXnXTn/photo-25-2026-02-01-23-55-13.jpg' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/4ZNGnmXC/photo-2025-07-22-22-17-01.jpg' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/Xrn1YrNc/photo-2026-04-13-21-17-34.jpg' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/wFsbD5Zx/photo-2026-05-24-09-38-59.jpg' },
+            { category: 'Дизайн', img: 'https://i.ibb.co/j9pVWmDX/1080-607-px.png' },
+
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/rRs6Vbs4/IMG-9533.jpg' },
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/kVBq53MF/IMG-9535.jpg' },
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/7xg83R6V/IMG-9537.jpg' },
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/FkTDbQyg/IMG-9474.jpg' },
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/Cp3Rx6HK/IMG-9478.jpg' },
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/b5TYbLD8/IMG-9494.jpg' },
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/0Vfzv7N4/IMG-9497.jpg' },
+            { category: 'Роспись одежды', img: 'https://i.ibb.co/27GB7fqJ/IMG-9529.jpg' },
+
+            { category: 'Аквагрим', img: 'https://i.ibb.co/8gzSkKZc/photo-2026-05-24-09-38-59.jpg' },
+            { category: 'Аквагрим', img: 'https://i.ibb.co/VcsZRFCb/IMG-20240115-180128.jpg' },
+            { category: 'Аквагрим', img: 'https://i.ibb.co/JRC5KZT0/photo-2024-09-12-13-45-08.jpg' },
+
+            { category: 'Фотография', img: 'https://i.ibb.co/yFczP9fG/photo-2026-04-25-21-31-28.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/zWJz9pvk/photo-2026-04-25-21-31-28-2.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/tPmPxG5y/photo-2026-04-25-21-31-29.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/NnKq62Mx/photo-2026-04-25-21-31-31.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/d0TgX3ZC/photo-2026-05-06-21-34-27.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/hxPwH2Yq/photo-2025-12-08-02-02-46.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/d0KdKjYp/photo-2025-12-08-02-02-52.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/7x0pXdMb/photo-2026-03-29-13-52-10.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/1G4GS8n7/photo-2026-03-29-13-52-14.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/v5KMvRH/photo-2026-04-12-12-17-42.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/jZP5fVt6/photo-2026-04-12-12-18-23.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/4wyD6RXq/photo-2026-04-12-12-18-26.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/PGj02Bz6/photo-2026-04-25-21-31-27.jpg' },
+            { category: 'Фотография', img: 'https://i.ibb.co/TD6cpKHv/photo-2026-04-25-21-31-27-2.jpg' }
         ];
+
+        // Дефолтные товары в Магазине
+        const defaultShopItems = [
+            { name: 'Оригинал картины',    img: 'https://i.ibb.co/Z6QLH265/photo-4-2025-12-14-22-00-00.png', price: '10 000 ₽' },
+            { name: 'Цифровая лицензия',   img: 'https://i.ibb.co/Q7fSFSTC/image.jpg', price: '500 ₽' },
+            { name: 'Авторский принт',     img: 'https://i.ibb.co/3YLQLg6j/photo-1-2026-03-20-09-18-30.jpg', price: '1 500 ₽' },
+            { name: 'Набор стикеров',      img: 'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png', price: '300 ₽' },
+        ];
+
+        // Инициализация портфолио и магазина из LocalStorage или дефолтных массивов
+        let portfolioItems = JSON.parse(localStorage.getItem('tuch_portfolio')) || defaultPortfolioItems;
+        let shopItems = JSON.parse(localStorage.getItem('tuch_shop')) || defaultShopItems;
+
+        // Состояние режима администратора
+        let isAdmin = localStorage.getItem('tuch_isAdmin') === 'true';
+
+        // Ключ ImgBB API
+        let imgbbApiKey = localStorage.getItem('tuch_imgbb_key') || '';
 
         const services = [
             { title: 'Иллюстрация', desc: 'Персонажи, сюжеты и концепты в авторском стиле.', price: 'от 1 500 ₽' },
@@ -587,14 +735,6 @@
             { title: 'Дизайн: графический и полиграфический', desc: 'Логотипы, фирменный стиль, печатная продукция.', price: 'от 2 500 ₽' },
             { title: 'Фотосъёмка', desc: 'Творческие и предметные фотосессии.', price: 'от 4 000 ₽' },
             { title: 'Аквагрим', desc: 'Креативный грим для мероприятий, фестивалей и фотосессий. Открыта к сотрудничеству с ивент-агентствами, фотографами и студиями.', price: 'от 2 000 ₽' },
-        ];
-
-        const shopItems = [
-            // ВСТАВЬТЕ СВОИ ССЫЛКИ В ПОЛЕ img
-            { name: 'Оригинал картины',    img: 'https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg', price: '10 000 ₽' },
-            { name: 'Цифровая лицензия',   img: 'https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg', price: '500 ₽' },
-            { name: 'Авторский принт',     img: 'https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg', price: '1 500 ₽' },
-            { name: 'Набор стикеров',      img: 'https://i.imgur.com/vngYHqp.jpeg', price: '300 ₽' },
         ];
 
         const tgUsername = 'tychenciya';
@@ -614,67 +754,36 @@
         }
 
         let currentFilter = 'all';
-        let shownCount = 0;
+        let shownCount = 6; // по дефолту при "Все" показываем чуть больше
 
         function initSite() {
+            // Загрузка сохранённых текстов из LocalStorage (если они были отредактированы)
+            loadSavedTexts();
+
+            // Отрисовка статуса админа
+            updateAdminUI();
+
             const portfolioGroups = groupPortfolio(portfolioItems);
-            const categories = ['Все', ...Object.keys(portfolioGroups)];
+            const categories = ['Все', 'Иллюстрация', 'Живопись', 'Дизайн', 'Роспись одежды', 'Аквагрим', 'Фотография'];
 
             // Portfolio filters
             const filterContainer = document.getElementById('port-filters');
+            filterContainer.innerHTML = '';
             categories.forEach((f, index) => {
                 const btn = document.createElement('button');
-                btn.className = `btn-tuch px-4 py-1 text-sm uppercase tracking-widest ${index === 0 ? 'filter-active' : ''}`;
+                btn.className = `btn-tuch px-4 py-1 text-sm uppercase tracking-widest ${f === 'Все' && currentFilter === 'all' ? 'filter-active' : (f === currentFilter ? 'filter-active' : '')}`;
                 btn.innerText = f;
                 btn.dataset.filter = f === 'Все' ? 'all' : f;
                 btn.onclick = () => filterPortfolio(btn.dataset.filter);
                 filterContainer.appendChild(btn);
             });
 
-            // Portfolio Grid - сначала показываем только первую картинку каждой категории
-            const grid = document.getElementById('port-grid');
-            const categoryNames = Object.keys(portfolioGroups);
-            
-            // Сначала добавляем все превью (по одной обложке на категорию)
-            categoryNames.forEach(cat => {
-                const items = portfolioGroups[cat];
-                const first = items[0];
-                const divFirst = document.createElement('div');
-                divFirst.className = `card-tuch overflow-hidden aspect-square`;
-                divFirst.dataset.category = first.category;
-                divFirst.dataset.preview = 'true';
-                divFirst.innerHTML = `<img src="${first.img}" class="w-full h-full object-cover">`;
-                grid.appendChild(divFirst);
-            });
-
-            // Затем добавляем все остальные работы — они появятся внизу, над кнопкой "Показать ещё"
-            categoryNames.forEach(cat => {
-                const items = portfolioGroups[cat];
-                for (let i = 1; i < items.length; i++) {
-                    const div = document.createElement('div');
-                    div.className = `card-tuch overflow-hidden aspect-square`;
-                    div.dataset.category = items[i].category;
-                    div.dataset.extra = 'true';
-                    div.style.display = 'none';
-                    div.innerHTML = `<img src="${items[i].img}" class="w-full h-full object-cover">`;
-                    grid.appendChild(div);
-                }
-            });
-
-            // Кнопка "Показать ещё"
-            const showAllWrapper = document.getElementById('show-all-wrapper');
-            const showMoreBtn = document.createElement('button');
-            showMoreBtn.id = 'show-more-btn';
-            showMoreBtn.className = 'btn-tuch px-8 py-3 font-bold uppercase tracking-wide';
-            showMoreBtn.innerText = 'Показать ещё ↓';
-            showMoreBtn.onclick = () => {
-                shownCount += 6;
-                renderPortfolioVisibility();
-            };
-            showAllWrapper.appendChild(showMoreBtn);
+            // Рендер грида портфолио
+            renderPortfolioGrid();
 
             // Services
             const servGrid = document.getElementById('serv-grid');
+            servGrid.innerHTML = '';
             services.forEach(s => {
                 const div = document.createElement('div');
                 div.className = `card-tuch p-6 flex flex-col justify-between`;
@@ -692,67 +801,168 @@
                 servGrid.appendChild(div);
             });
 
-            // Shop
-            const shopGrid = document.getElementById('shop-grid');
-            shopItems.forEach(item => {
-                const div = document.createElement('div');
-                div.className = `card-tuch p-4 text-center`;
-                const tgText = `Здравствуйте! Хочу приобрести «${item.name}». Подскажите, пожалуйста, как оформить заказ?`;
-                div.innerHTML = `
-                    <img src="${item.img}" class="w-full aspect-square object-cover mb-4 rounded-lg">
-                    <h3 class="font-bold mb-2">${item.name}</h3>
-                    <p class="mb-4 font-mono">${item.price}</p>
-                    <a href="${makeTgLink(tgText)}" target="_blank" class="btn-tuch w-full py-2 text-xs uppercase inline-block">Купить</a>
-                `;
-                shopGrid.appendChild(div);
-            });
-
-            // Устанавливаем начальную видимость портфолио и состояние кнопки "Показать ещё"
-            renderPortfolioVisibility();
+            // Shop (Рендерится через JS)
+            renderShopGrid();
         }
 
-        function renderPortfolioVisibility() {
-            const items = document.querySelectorAll('#port-grid > div');
-            let extraIndex = 0;
-            let remainingHidden = 0;
-
-            items.forEach(item => {
-                if (currentFilter === 'all') {
-                    // Режим "Все": превью (по одной обложке на категорию) видны всегда,
-                    // остальные работы открываются постепенно кнопкой "Показать ещё"
-                    if (item.dataset.preview === 'true') {
-                        item.style.display = '';
-                    } else if (item.dataset.extra === 'true') {
-                        if (extraIndex < shownCount) {
-                            item.style.display = '';
-                        } else {
-                            item.style.display = 'none';
-                            remainingHidden++;
-                        }
-                        extraIndex++;
-                    } else {
-                        item.style.display = 'none';
-                    }
-                } else {
-                    // Конкретная категория — сразу показываем ВСЕ работы этой категории,
-                    // без кнопки "Показать ещё"
-                    item.style.display = (item.dataset.category === currentFilter) ? '' : 'none';
+        // Загрузка отредактированных текстов из LocalStorage
+        function loadSavedTexts() {
+            const savedTexts = JSON.parse(localStorage.getItem('tuch_texts')) || {};
+            Object.keys(savedTexts).forEach(id => {
+                const el = document.querySelector(`[data-edit-id="${id}"]`);
+                if (el) {
+                    el.innerText = savedTexts[id];
                 }
             });
+        }
 
-            // Кнопка "Показать ещё" работает ТОЛЬКО в категории "Все".
-            // В любой другой категории она полностью скрыта, а все картинки видны сразу.
-            const wrapper = document.getElementById('show-all-wrapper');
-            const btn = document.getElementById('show-more-btn');
+        // Отрисовка сетки портфолио
+        function renderPortfolioGrid() {
+            const grid = document.getElementById('port-grid');
+            grid.innerHTML = '';
+
+            const portfolioGroups = groupPortfolio(portfolioItems);
+            const categoryNames = Object.keys(portfolioGroups);
+
             if (currentFilter === 'all') {
-                wrapper.style.display = '';
-                if (btn) btn.style.display = (remainingHidden > 0) ? '' : 'none';
+                // В режиме "Все" мы показываем по 1 первой работе от каждой категории,
+                // а затем остальные работы постепенно по клику на "Показать ещё"
+                
+                // 1. Превью (по 1 обложке)
+                let previewItems = [];
+                categoryNames.forEach(cat => {
+                    const items = portfolioGroups[cat];
+                    if (items && items.length > 0) {
+                        previewItems.push({ item: items[0], index: portfolioItems.indexOf(items[0]) });
+                    }
+                });
+
+                previewItems.forEach(p => {
+                    grid.appendChild(createCardElement(p.item, p.index, true, false, true, true));
+                });
+
+                // 2. Все остальные
+                let extraItems = [];
+                portfolioItems.forEach((item, idx) => {
+                    // Проверяем, не является ли этот элемент уже отрисованным превью
+                    const isPreview = previewItems.some(p => p.index === idx);
+                    if (!isPreview) {
+                        extraItems.push({ item, idx });
+                    }
+                });
+
+                extraItems.forEach((ex, index) => {
+                    const isVisible = index < shownCount;
+                    // Для картинок ниже первого экрана используем lazy load
+                    grid.appendChild(createCardElement(ex.item, ex.idx, false, true, isVisible, false));
+                });
+
+                // Кнопка "Показать ещё"
+                const remaining = extraItems.length - shownCount;
+                renderShowMoreButton(remaining > 0);
+
             } else {
-                wrapper.style.display = 'none';
-                if (btn) btn.style.display = 'none';
+                // В режиме выбранной категории показываем вообще все работы этой категории без кнопки "Показать ещё"
+                portfolioItems.forEach((item, idx) => {
+                    if (item.category === currentFilter) {
+                        grid.appendChild(createCardElement(item, idx, false, false, true, false));
+                    }
+                });
+                renderShowMoreButton(false);
             }
         }
 
+        // Создание элемента карточки портфолио
+        function createCardElement(item, globalIndex, isPreview, isExtra, isVisible = true, isFirstScreen = false) {
+            const div = document.createElement('div');
+            div.className = `card-tuch overflow-hidden aspect-square ${(!isVisible) ? 'hidden-item' : ''}`;
+            div.dataset.category = item.category;
+            div.dataset.index = globalIndex;
+            if (isPreview) div.dataset.preview = 'true';
+            if (isExtra) div.dataset.extra = 'true';
+
+            // Оптимизация загрузки картинок: loading="lazy" для элементов не на 1 экране
+            const loadingStrategy = isFirstScreen ? 'eager' : 'lazy';
+
+            // Контент карточки
+            let html = `<img src="${item.img}" class="w-full h-full object-cover" loading="${loadingStrategy}" width="280" height="280" alt="${item.category} - Работа Розалии">`;
+
+            // Если включен режим админа — накладываем панель управления поверх картинки
+            if (isAdmin) {
+                html += `
+                    <div class="absolute inset-0 bg-black/75 flex flex-col justify-between p-3 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                        <span class="text-xs bg-[#CBE857] text-[#323843] font-bold px-2 py-1 rounded self-start">${item.category}</span>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="triggerReplaceImage(${globalIndex})" class="w-full bg-[#C68DFF] text-white hover:bg-white hover:text-[#323843] transition py-1.5 rounded-lg text-xs font-bold uppercase">Заменить</button>
+                            <button onclick="deletePortfolioItem(${globalIndex})" class="w-full bg-red-500 hover:bg-red-600 transition text-white py-1.5 rounded-lg text-xs font-bold uppercase">Удалить</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = html;
+            return div;
+        }
+
+        // Рендер грида Магазина (Добавлено полноценное администрирование товаров!)
+        function renderShopGrid() {
+            const shopGrid = document.getElementById('shop-grid');
+            shopGrid.innerHTML = '';
+
+            shopItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `card-tuch p-4 text-center flex flex-col justify-between relative overflow-hidden`;
+                
+                const tgText = `Здравствуйте! Хочу приобрести «${item.name}». Подскажите, пожалуйста, как оформить заказ?`;
+                
+                // HTML разметка товара
+                let html = `
+                    <div class="relative group aspect-square overflow-hidden rounded-lg mb-4">
+                        <img src="${item.img}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" width="300" height="300">
+                `;
+
+                // Оверлей админа на саму картинку товара для её Замены
+                if (isAdmin) {
+                    html += `
+                        <div class="absolute inset-0 bg-black/85 flex flex-col justify-center items-center p-3 opacity-0 hover:opacity-100 transition-opacity duration-150">
+                            <button onclick="triggerReplaceShopImage(${index})" class="bg-[#CBE857] text-[#323843] hover:scale-105 transition font-bold px-4 py-2 rounded-full text-xs uppercase mb-2">Заменить фото</button>
+                            <button onclick="deleteShopItem(${index})" class="bg-red-500 text-white hover:scale-105 transition font-bold px-4 py-2 rounded-full text-xs uppercase">Удалить товар</button>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    </div>
+                    <div>
+                        <h3 data-shop-id="shop-name-${index}" class="font-bold mb-2 ${isAdmin ? 'editable-active' : ''}" ${isAdmin ? 'contenteditable="true" onblur="saveEditedShopText(event, ' + index + ', \'name\')"' : ''}>${item.name}</h3>
+                        <p data-shop-id="shop-price-${index}" class="mb-4 font-mono text-[#CBE857] ${isAdmin ? 'editable-active' : ''}" ${isAdmin ? 'contenteditable="true" onblur="saveEditedShopText(event, ' + index + ', \'price\')"' : ''}>${item.price}</p>
+                    </div>
+                    <a href="${makeTgLink(tgText)}" target="_blank" class="btn-tuch w-full py-2 text-xs uppercase inline-block">Купить</a>
+                `;
+
+                div.innerHTML = html;
+                shopGrid.appendChild(div);
+            });
+        }
+
+        // Отрисовка кнопки Показать ещё
+        function renderShowMoreButton(visible) {
+            const wrapper = document.getElementById('show-all-wrapper');
+            wrapper.innerHTML = '';
+            if (visible) {
+                const showMoreBtn = document.createElement('button');
+                showMoreBtn.id = 'show-more-btn';
+                showMoreBtn.className = 'btn-tuch px-8 py-3 font-bold uppercase tracking-wide';
+                showMoreBtn.innerText = 'Показать ещё ↓';
+                showMoreBtn.onclick = () => {
+                    shownCount += 6;
+                    renderPortfolioGrid();
+                };
+                wrapper.appendChild(showMoreBtn);
+            }
+        }
+
+        // Фильтрация
         function filterPortfolio(category) {
             currentFilter = category;
 
@@ -761,20 +971,312 @@
             const activeBtn = Array.from(buttons).find(b => b.dataset.filter === category);
             if (activeBtn) activeBtn.classList.add('filter-active');
 
-            renderPortfolioVisibility();
+            renderPortfolioGrid();
+        }
+
+        /* ===== СЕКРЕТНЫЕ НАСТРОЙКИ БЕЗОПАСНОСТИ ===== */
+        
+        const correctPasswordString = "tuch_studio_roza";
+
+        // Переключение режима админа
+        function toggleAdminMode() {
+            if (!isAdmin) {
+                const enteredPass = prompt('Введите секретный ключ администратора:');
+                if (enteredPass === null) return; // Нажата отмена
+
+                if (enteredPass.trim() === correctPasswordString) {
+                    isAdmin = true;
+                    localStorage.setItem('tuch_isAdmin', 'true');
+                    alert('Доступ разрешён. Добро пожаловать, Розалия! Теперь вы можете менять картинки и редактировать ТЕКСТЫ/ТОВАРЫ на сайте.');
+                } else {
+                    alert('Доступ заблокирован. Неверный ключ администратора!');
+                }
+            } else {
+                if (confirm('Выйти из режима администратора?')) {
+                    isAdmin = false;
+                    localStorage.removeItem('tuch_isAdmin');
+                }
+            }
+            updateAdminUI();
+            initSite();
+        }
+
+        // Обновление UI элементов админки
+        function updateAdminUI() {
+            const uploadPanel = document.getElementById('admin-upload-panel');
+            const shopPanel = document.getElementById('admin-shop-panel');
+            const indicator = document.getElementById('admin-indicator');
+            const apiKeyInput = document.getElementById('imgbb-api-key');
+            const secretStar = document.getElementById('admin-secret-star');
+
+            if (isAdmin) {
+                uploadPanel.classList.remove('hidden');
+                shopPanel.classList.remove('hidden');
+                indicator.classList.remove('hidden');
+                apiKeyInput.value = imgbbApiKey;
+                secretStar.setAttribute('fill', '#CBE857');
+                enableTextEditing(true);
+            } else {
+                uploadPanel.classList.add('hidden');
+                shopPanel.classList.add('hidden');
+                indicator.classList.add('hidden');
+                secretStar.setAttribute('fill', '#C68DFF');
+                enableTextEditing(false);
+            }
+        }
+
+        // Активация/деактивация редактирования элементов на странице
+        function enableTextEditing(enable) {
+            const elements = document.querySelectorAll('[data-edit-id]');
+            elements.forEach(el => {
+                if (enable) {
+                    el.classList.add('editable-active');
+                    el.setAttribute('contenteditable', 'true');
+                    el.addEventListener('blur', saveEditedText);
+                } else {
+                    el.classList.remove('editable-active');
+                    el.removeAttribute('contenteditable');
+                    el.removeEventListener('blur', saveEditedText);
+                }
+            });
+        }
+
+        // Сохранение отредактированного текста страницы
+        function saveEditedText(event) {
+            const el = event.target;
+            const id = el.dataset.editId;
+            const newText = el.innerText.trim();
+
+            const savedTexts = JSON.parse(localStorage.getItem('tuch_texts')) || {};
+            savedTexts[id] = newText;
+            localStorage.setItem('tuch_texts', JSON.stringify(savedTexts));
+        }
+
+        // Сохранение отредактированного названия или цены товара
+        window.saveEditedShopText = function(event, index, field) {
+            const el = event.target;
+            const newText = el.innerText.trim();
+            
+            shopItems[index][field] = newText;
+            localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+        };
+
+        // Выбор способа загрузки в админке
+        function toggleUploadMethod() {
+            const method = document.getElementById('upload-method').value;
+            const containerUrl = document.getElementById('method-url-container');
+            const containerFile = document.getElementById('method-file-container');
+
+            if (method === 'url') {
+                containerUrl.classList.remove('hidden');
+                containerFile.classList.add('hidden');
+            } else {
+                containerUrl.classList.add('hidden');
+                containerFile.classList.remove('hidden');
+            }
+        }
+
+        // Загрузка файла на ImgBB через API
+        async function uploadFileToImgBB(file) {
+            const apiKey = document.getElementById('imgbb-api-key').value.trim();
+            if (!apiKey) {
+                alert('Ошибка! Пожалуйста, укажите ваш API ключ ImgBB в панели. Без него загрузка файлов невозможна.');
+                return null;
+            }
+
+            imgbbApiKey = apiKey;
+            localStorage.setItem('tuch_imgbb_key', apiKey);
+
+            const loader = document.getElementById('upload-loader-container');
+            loader.classList.remove('hidden');
+            loader.classList.add('flex');
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    return result.data.url;
+                } else {
+                    alert('Ошибка ImgBB API: ' + (result.error ? result.error.message : 'Неизвестная ошибка'));
+                    return null;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Произошла сетевая ошибка при загрузке на ImgBB!');
+                return null;
+            } finally {
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+            }
+        }
+
+        // Добавление новой работы в портфолио
+        async function addNewPortfolioItem() {
+            const category = document.getElementById('admin-new-cat').value;
+            const method = document.getElementById('upload-method').value;
+
+            if (method === 'url') {
+                const url = document.getElementById('admin-new-url').value.trim();
+                if (!url) {
+                    alert('Пожалуйста, введите URL изображения!');
+                    return;
+                }
+                portfolioItems.unshift({ category, img: url });
+                saveAndReload('Изображение успешно добавлено по прямой ссылке!');
+                document.getElementById('admin-new-url').value = '';
+            } else {
+                const fileInput = document.getElementById('admin-new-file');
+                if (fileInput.files.length === 0) {
+                    alert('Пожалуйста, выберите файл на компьютере для отправки в облако!');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                const uploadedUrl = await uploadFileToImgBB(file);
+                
+                if (uploadedUrl) {
+                    portfolioItems.unshift({ category, img: uploadedUrl });
+                    saveAndReload('Файл загружен на ImgBB, а ссылка успешно сохранена в портфолио!');
+                    fileInput.value = '';
+                }
+            }
+        }
+
+        // Добавление нового товара в магазин (Автозагрузка фото на ImgBB!)
+        async function addNewShopItem() {
+            const name = document.getElementById('shop-new-name').value.trim();
+            const price = document.getElementById('shop-new-price').value.trim();
+            const fileInput = document.getElementById('shop-new-file');
+
+            if (!name || !price) {
+                alert('Пожалуйста, заполните название и цену товара!');
+                return;
+            }
+
+            if (fileInput.files.length === 0) {
+                alert('Пожалуйста, выберите фотографию товара!');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const uploadedUrl = await uploadFileToImgBB(file);
+
+            if (uploadedUrl) {
+                shopItems.push({ name, img: uploadedUrl, price });
+                localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+                alert('Товар успешно добавлен в Магазин!');
+                
+                // Сброс полей
+                document.getElementById('shop-new-name').value = '';
+                document.getElementById('shop-new-price').value = '';
+                fileInput.value = '';
+                
+                initSite();
+            }
+        }
+
+        // Удаление элемента портфолио
+        window.deletePortfolioItem = function(index) {
+            if (confirm('Вы действительно хотите навсегда удалить эту работу из портфолио?')) {
+                portfolioItems.splice(index, 1);
+                saveAndReload('Работа успешно удалена!');
+            }
+        };
+
+        // Удаление товара из магазина
+        window.deleteShopItem = function(index) {
+            if (confirm('Вы действительно хотите навсегда удалить этот товар из магазина?')) {
+                shopItems.splice(index, 1);
+                localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+                alert('Товар удален из Магазина!');
+                initSite();
+            }
+        };
+
+        // Замена изображения в ПОРТФОЛИО
+        let replaceTargetIndex = null;
+        window.triggerReplaceImage = function(index) {
+            const apiKey = document.getElementById('imgbb-api-key').value.trim();
+            if (!apiKey) {
+                alert('Пожалуйста, введите ваш API Ключ ImgBB в блоке добавления работы! Замена картинок также отправляет файлы в облако.');
+                return;
+            }
+            replaceTargetIndex = index;
+            const replaceInput = document.getElementById('replace-file-input');
+            replaceInput.click();
+        };
+
+        // Обработчик выбора файла для замены в портфолио
+        document.getElementById('replace-file-input').addEventListener('change', async function(e) {
+            if (replaceTargetIndex === null || e.target.files.length === 0) return;
+
+            const file = e.target.files[0];
+            const uploadedUrl = await uploadFileToImgBB(file);
+
+            if (uploadedUrl) {
+                portfolioItems[replaceTargetIndex].img = uploadedUrl;
+                saveAndReload('Картинка успешно заменена на новую через облако ImgBB!');
+            }
+            replaceTargetIndex = null;
+            e.target.value = '';
+        });
+
+        // Замена изображения в МАГАЗИНЕ
+        let replaceShopTargetIndex = null;
+        window.triggerReplaceShopImage = function(index) {
+            const apiKey = document.getElementById('imgbb-api-key').value.trim();
+            if (!apiKey) {
+                alert('Пожалуйста, введите ваш API Ключ ImgBB в панели выше! Замена картинок также отправляет файлы в облако.');
+                return;
+            }
+            replaceShopTargetIndex = index;
+            const replaceShopInput = document.getElementById('replace-shop-file-input');
+            replaceShopInput.click();
+        };
+
+        // Обработчик выбора файла для замены в магазине
+        document.getElementById('replace-shop-file-input').addEventListener('change', async function(e) {
+            if (replaceShopTargetIndex === null || e.target.files.length === 0) return;
+
+            const file = e.target.files[0];
+            const uploadedUrl = await uploadFileToImgBB(file);
+
+            if (uploadedUrl) {
+                shopItems[replaceShopTargetIndex].img = uploadedUrl;
+                localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+                alert('Фотография товара успешно заменена через облако ImgBB!');
+                initSite();
+            }
+            replaceShopTargetIndex = null;
+            e.target.value = '';
+        });
+
+        // Вспомогательная функция для сохранения состояния
+        function saveAndReload(message) {
+            localStorage.setItem('tuch_portfolio', JSON.stringify(portfolioItems));
+            alert(message);
+            initSite();
         }
 
         /* ===== Лайтбокс: открытие картинок портфолио ===== */
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxCounter = document.getElementById('lightbox-counter');
-        let lightboxList = [];   // список src сейчас видимых картинок
+        let lightboxList = [];
         let lightboxIndex = 0;
 
         function getVisiblePortfolioImages() {
             const imgs = [];
             document.querySelectorAll('#port-grid > div').forEach(div => {
-                if (div.style.display !== 'none') {
+                if (div.style.display !== 'none' && !div.classList.contains('hidden-item')) {
                     const img = div.querySelector('img');
                     if (img) imgs.push(img.getAttribute('src'));
                 }
@@ -783,11 +1285,14 @@
         }
 
         function openLightbox(src) {
+            if (isAdmin && event.target.tagName === 'BUTTON') return;
+
             lightboxList = getVisiblePortfolioImages();
             lightboxIndex = Math.max(0, lightboxList.indexOf(src));
             updateLightbox();
             lightbox.classList.add('open');
             document.body.style.overflow = 'hidden';
+            preloadNextLightboxImage();
         }
 
         function updateLightbox() {
@@ -800,6 +1305,13 @@
             lightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxList.length}`;
         }
 
+        function preloadNextLightboxImage() {
+            if (lightboxList.length <= 1) return;
+            const nextIndex = (lightboxIndex + 1) % lightboxList.length;
+            const imgPreload = new Image();
+            imgPreload.src = lightboxList[nextIndex];
+        }
+
         function closeLightbox() {
             lightbox.classList.remove('open');
             document.body.style.overflow = '';
@@ -809,21 +1321,20 @@
             if (!lightboxList.length) return;
             lightboxIndex = (lightboxIndex + dir + lightboxList.length) % lightboxList.length;
             updateLightbox();
+            preloadNextLightboxImage();
         }
 
-        // Клик по картинке в портфолио — открыть лайтбокс (делегирование событий)
         document.getElementById('port-grid').addEventListener('click', e => {
             const img = e.target.closest('img');
-            if (img) openLightbox(img.getAttribute('src'));
+            if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
+                openLightbox(img.getAttribute('src'));
+            }
         });
 
-        // Управление лайтбоксом
         document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
         document.getElementById('lightbox-prev').addEventListener('click', e => { e.stopPropagation(); lightboxStep(-1); });
         document.getElementById('lightbox-next').addEventListener('click', e => { e.stopPropagation(); lightboxStep(1); });
-        // Клик по тёмному фону закрывает окно
         lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-        // Управление с клавиатуры
         document.addEventListener('keydown', e => {
             if (!lightbox.classList.contains('open')) return;
             if (e.key === 'Escape') closeLightbox();
@@ -863,5 +1374,5 @@
 
         window.onload = initSite;
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a175f65aaab5f113',t:'MTc4MzQxODAwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
