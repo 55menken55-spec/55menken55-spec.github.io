@@ -596,7 +596,7 @@
                     </p>
                 </div>
 
-                <!-- Лягушка -->
+                <!-- Лягушка (размер увеличен, надписи убраны) -->
                 <div class="mt-8 flex items-center gap-3 self-start">
                     <img src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Wink Frog" class="w-24 h-24 object-contain filter drop-shadow-[0_4px_12px_rgba(203,232,87,0.35)]" style="mix-blend-mode: screen;">
                 </div>
@@ -614,7 +614,7 @@
                     <!-- Фотография (Кликабельна для открытия в лайтбоксе!) -->
                     <img id="about-img" onclick="openLightbox(this.src)" src="https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg" alt="Розалия | Тученция" class="w-full aspect-[3/4] object-cover filter brightness-95 transition-transform duration-300">
                     
-                    <!-- Оверлей админа -->
+                    <!-- Оверлей админа (показывается только в режиме админа) -->
                     <div id="about-admin-overlay" class="hidden absolute inset-0 bg-black/75 flex items-center justify-center">
                         <button onclick="triggerReplaceAboutImage()" class="bg-[#CBE857] text-[#323843] font-bold px-6 py-2.5 rounded-full text-xs uppercase hover:scale-105 transition">
                             Сменить фото автора
@@ -648,6 +648,7 @@
     </section>
 
     <footer class="py-10 text-center opacity-50 text-sm relative">
+        <!-- Секретный триггер: фиолетовая звездочка в самом низу справа. При нажатии активирует вход в админку! -->
         <svg id="admin-secret-star" onclick="toggleAdminMode()" class="star-burst bottom-4 right-8 twinkle cursor-pointer hover:scale-125 transition-transform" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s; pointer-events: auto;">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF" opacity="0.8"/>
         </svg>
@@ -727,11 +728,11 @@
             { name: 'Набор стикеров',      img: 'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png', price: '300 ₽' },
         ];
 
-        let portfolioItems = JSON.parse(localStorage.getItem('tuch_portfolio')) || defaultPortfolioItems;
-        let shopItems = JSON.parse(localStorage.getItem('tuch_shop')) || defaultShopItems;
+        let portfolioItems = JSON.parse(localStorage.getItem('t_portfolio')) || defaultPortfolioItems;
+        let shopItems = JSON.parse(localStorage.getItem('t_shop')) || defaultShopItems;
 
-        let isAdmin = localStorage.getItem('tuch_isAdmin') === 'true';
-        let imgbbApiKey = localStorage.getItem('tuch_imgbb_key') || '';
+        let isAdmin = localStorage.getItem('t_isAdmin') === 'true';
+        let imgbbApiKey = localStorage.getItem('t_imgbb_key') || '';
 
         const services = [
             { title: 'Иллюстрация', desc: 'Персонажи, сюжеты и концепты в авторском стиле.', price: 'от 1 500 ₽' },
@@ -761,7 +762,7 @@
         let shownCount = 6;
 
         function initSite() {
-            const savedAboutImg = localStorage.getItem('tuch_about_img');
+            const savedAboutImg = localStorage.getItem('t_about_img');
             if (savedAboutImg) {
                 document.getElementById('about-img').src = savedAboutImg;
             }
@@ -808,7 +809,7 @@
         }
 
         function loadSavedTexts() {
-            const savedTexts = JSON.parse(localStorage.getItem('tuch_texts')) || {};
+            const savedTexts = JSON.parse(localStorage.getItem('t_texts')) || {};
             Object.keys(savedTexts).forEach(id => {
                 const el = document.querySelector(`[data-edit-id="${id}"]`);
                 if (el) {
@@ -965,7 +966,7 @@
 
                 if (enteredPass.trim() === correctPasswordString) {
                     isAdmin = true;
-                    localStorage.setItem('tuch_isAdmin', 'true');
+                    localStorage.setItem('t_isAdmin', 'true');
                     alert('Доступ разрешён. Добро пожаловать, Розалия! Теперь вы можете менять картинки и редактировать ТЕКСТЫ/ТОВАРЫ на сайте.');
                 } else {
                     alert('Доступ заблокирован. Неверный ключ администратора!');
@@ -973,7 +974,7 @@
             } else {
                 if (confirm('Выйти из режима администратора?')) {
                     isAdmin = false;
-                    localStorage.removeItem('tuch_isAdmin');
+                    localStorage.removeItem('t_isAdmin');
                 }
             }
             updateAdminUI();
@@ -1034,16 +1035,16 @@
             const id = el.dataset.editId;
             const newText = el.innerText.trim();
 
-            const savedTexts = JSON.parse(localStorage.getItem('tuch_texts')) || {};
+            const savedTexts = JSON.parse(localStorage.getItem('t_texts')) || {};
             savedTexts[id] = newText;
-            localStorage.setItem('tuch_texts', JSON.stringify(savedTexts));
+            localStorage.setItem('t_texts', JSON.stringify(savedTexts));
         }
 
         window.saveEditedShopText = function(event, index, field) {
             const el = event.target;
             const newText = el.innerText.trim();
             shopItems[index][field] = newText;
-            localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+            localStorage.setItem('t_shop', JSON.stringify(shopItems));
         };
 
         function toggleUploadMethod() {
@@ -1068,7 +1069,7 @@
             }
 
             imgbbApiKey = apiKey;
-            localStorage.setItem('tuch_imgbb_key', apiKey);
+            localStorage.setItem('t_imgbb_key', apiKey);
 
             const loader = document.getElementById('upload-loader-container');
             loader.classList.remove('hidden');
@@ -1147,7 +1148,7 @@
 
             if (uploadedUrl) {
                 shopItems.push({ name, img: uploadedUrl, price });
-                localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+                localStorage.setItem('t_shop', JSON.stringify(shopItems));
                 alert('Товар успешно добавлен в Магазин!');
                 document.getElementById('shop-new-name').value = '';
                 document.getElementById('shop-new-price').value = '';
@@ -1166,7 +1167,7 @@
         window.deleteShopItem = function(index) {
             if (confirm('Вы действительно хотите навсегда удалить этот товар из магазина?')) {
                 shopItems.splice(index, 1);
-                localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+                localStorage.setItem('t_shop', JSON.stringify(shopItems));
                 alert('Товар удален из Магазина!');
                 initSite();
             }
@@ -1212,7 +1213,7 @@
             const uploadedUrl = await uploadFileToImgBB(file);
             if (uploadedUrl) {
                 shopItems[replaceShopTargetIndex].img = uploadedUrl;
-                localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
+                localStorage.setItem('t_shop', JSON.stringify(shopItems));
                 alert('Фотография товара успешно заменена через облако ImgBB!');
                 initSite();
             }
@@ -1235,14 +1236,14 @@
             const uploadedUrl = await uploadFileToImgBB(file);
             if (uploadedUrl) {
                 document.getElementById('about-img').src = uploadedUrl;
-                localStorage.setItem('tuch_about_img', uploadedUrl);
+                localStorage.setItem('t_about_img', uploadedUrl);
                 alert('Главная фотография автора успешно изменена и сохранена в облаке ImgBB!');
             }
             e.target.value = '';
         });
 
         function saveAndReload(message) {
-            localStorage.setItem('tuch_portfolio', JSON.stringify(portfolioItems));
+            localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
             alert(message);
             initSite();
         }
@@ -1261,11 +1262,8 @@
             // 1. Проверяем, находится ли кликнутый элемент в разделе Портфолио
             const isInPortfolio = Array.from(document.querySelectorAll('#port-grid img')).some(img => img.src === currentSrc);
             if (isInPortfolio) {
-                document.querySelectorAll('#port-grid > div').forEach(div => {
-                    if (div.style.display !== 'none' && !div.classList.contains('hidden-item')) {
-                        const img = div.querySelector('img');
-                        if (img) list.push(img.src);
-                    }
+                document.querySelectorAll('#port-grid img').forEach(img => {
+                    list.push(img.src);
                 });
                 return list;
             }
@@ -1323,6 +1321,14 @@
             updateLightbox();
             preloadNextLightboxImage();
         }
+
+        // Слушатель кликов по Портфолио
+        document.getElementById('port-grid').addEventListener('click', e => {
+            const img = e.target.closest('img');
+            if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
+                openLightbox(img.src);
+            }
+        });
 
         // Слушатель кликов по Магазину (делегирование событий)
         document.getElementById('shop-grid').addEventListener('click', e => {
