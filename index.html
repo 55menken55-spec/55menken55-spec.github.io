@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тученция | Творческая студия Розалии</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --tuch-purple: #C68DFF;
+            --tuch-lime: #CBE857;
+            --tuch-dark: #323843;
+            --tuch-lavender: #BFA0D9;
+            --tuch-pink: #E8A0BF;
+        }
+
+        body {
+            background-color: var(--tuch-dark);
+            color: white;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        @font-face {
+            font-family: 'Franklin Gothic';
+            src: local('Franklin Gothic Demi Cond'), local('FranklinGothic-DemiCond'),
+                 url('fonts/FranklinGothic-DemiCond.woff2') format('woff2'),
+                 url('fonts/FranklinGothic-DemiCond.woff') format('woff');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Airfool';
+            src: local('Airfool Regular'), local('Airfool-Regular'),
+                 url('fonts/Airfool-Regular.woff2') format('woff2'),
+                 url('fonts/Airfool-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Franklin Gothic', 'Arial Narrow', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .font-marker {
+            font-family: 'Airfool', cursive;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        nav, .nav-link, .btn-tuch {
+            font-family: 'Franklin Gothic', 'Arial Narrow', sans-serif;
+        }
+
+        .glow-border {
+            border: 3px solid var(--tuch-lime);
+            box-shadow: 0 0 12px rgba(203, 232, 87, 0.3), inset 0 0 12px rgba(203, 232, 87, 0.1);
+            border-radius: 16px;
+        }
+
+        .lavender-banner {
+            background: linear-gradient(135deg, var(--tuch-lavender) 0%, #A080C0 100%);
+            border-radius: 12px;
+            padding: 12px 24px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(191, 160, 217, 0.4);
+            display: inline-block;
+        }
+
+        .lavender-banner::after {
+            content: '';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-left: 14px solid var(--tuch-lavender);
+        }
+
+        .star-burst {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .swing-ropes {
+            position: absolute;
+            top: -20px;
+            left: 20%;
+            right: 20%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .rope {
+            width: 3px;
+            height: 20px;
+            background: var(--tuch-pink);
+            position: relative;
+        }
+
+        .rope::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -4px;
+            width: 11px;
+            height: 11px;
+            background: var(--tuch-pink);
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        .flag-tag {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            width: 30px;
+            height: 40px;
+            background: var(--tuch-lavender);
+            clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .card-tuch {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--tuch-lime);
+            border-radius: 20px;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        .card-tuch:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-tuch {
+            background-color: var(--tuch-purple);
+            color: white;
+            border-radius: 50px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        .btn-tuch:hover {
+            background-color: var(--tuch-lime);
+            color: var(--tuch-dark);
+        }
+
+        .nav-link {
+            position: relative;
+            cursor: pointer;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: currentColor;
+            transition: width 0.3s;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            scroll-margin-top: 100px;
+            position: relative;
+        }
+
+        .filter-active {
+            background-color: var(--tuch-lime) !important;
+            color: var(--tuch-dark) !important;
+        }
+
+        /* Floating decoration animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-anim { animation: float 3s ease-in-out infinite; }
+        .float-anim-delay { animation: float 3s ease-in-out 1.5s infinite; }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.85); }
+        }
+        .twinkle { animation: twinkle 2s ease-in-out infinite; }
+
+        .hidden-item {
+            display: none !important;
+        }
+
+        /* Кликабельные картинки портфолио */
+        .card-tuch img {
+            cursor: pointer;
+        }
+
+        /* Лайтбокс для просмотра картинок */
+        #lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(20, 22, 28, 0.92);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #lightbox.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #lightbox img {
+            max-width: 92vw;
+            max-height: 86vh;
+            border-radius: 16px;
+            border: 3px solid var(--tuch-lime);
+            box-shadow: 0 0 40px rgba(203, 232, 87, 0.25);
+            object-fit: contain;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        #lightbox.open img {
+            transform: scale(1);
+        }
+        .lightbox-btn {
+            position: absolute;
+            background: rgba(198, 141, 255, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            font-size: 26px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.25s, transform 0.2s;
+            z-index: 2;
+            user-select: none;
+        }
+        .lightbox-btn:hover {
+            background: var(--tuch-lime);
+            color: var(--tuch-dark);
+            transform: scale(1.08);
+        }
+        #lightbox-close { top: 20px; right: 20px; }
+        #lightbox-prev { left: 16px; top: 50%; transform: translateY(-50%); }
+        #lightbox-next { right: 16px; top: 50%; transform: translateY(-50%); }
+        #lightbox-prev:hover { transform: translateY(-50%) scale(1.08); }
+        #lightbox-next:hover { transform: translateY(-50%) scale(1.08); }
+        #lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            letter-spacing: 0.05em;
+            background: rgba(0,0,0,0.35);
+            padding: 6px 14px;
+            border-radius: 50px;
+        }
+        @media (max-width: 640px) {
+            .lightbox-btn { width: 44px; height: 44px; font-size: 22px; }
+            #lightbox-prev { left: 8px; }
+            #lightbox-next { right: 8px; }
+        }
+    </style>
+</head>
+<body class="theme-tuch">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center backdrop-blur-md">
+        <div class="font-bold text-2xl text-[#CBE857]">ТУЧЕНЦИЯ</div>
+        <!-- Hamburger button -->
+        <button id="menu-btn" class="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 focus:outline-none" aria-label="Открыть меню">
+            <span class="block w-8 h-0.5 bg-[#CBE857] transition-all duration-300 origin-center"></span>
+            <span class="block w-8 h-0.5 bg-[#CBE857] transition-all duration-300"></span>
+            <span class="block w-8 h-0.5 bg-[#CBE857] transition-all duration-300 origin-center"></span>
+        </button>
+    </nav>
+
+    <!-- Mobile/dropdown menu (full-width bar below nav) -->
+    <div id="mobile-menu" class="fixed top-[88px] left-0 w-full z-40 bg-[#323843]/95 backdrop-blur-md border-b-2 border-[#CBE857]/60 shadow-lg -translate-y-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <a href="#about" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Обо мне</a>
+            <a href="#portfolio" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Портфолио</a>
+            <a href="#services" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Услуги</a>
+            <a href="#shop" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Магазин</a>
+            <a href="#contact" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Контакты</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="pt-40 pb-20 px-6 text-center relative overflow-hidden">
+        <!-- Decorative stars -->
+        <svg class="star-burst top-20 left-10 twinkle" width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
+        </svg>
+        <svg class="star-burst top-32 right-16 twinkle" width="30" height="30" viewBox="0 0 40 40" fill="none" style="animation-delay:0.5s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
+        </svg>
+        <svg class="star-burst bottom-40 left-1/4 twinkle" width="25" height="25" viewBox="0 0 40 40" fill="none" style="animation-delay:1s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
+        </svg>
+
+        <div class="max-w-4xl mx-auto relative">
+            <!-- Banner with nickname -->
+            <div class="mb-8">
+                <div class="lavender-banner inline-block relative">
+                    <div class="swing-ropes">
+                        <div class="rope"></div>
+                        <div class="rope"></div>
+                    </div>
+                    <span class="font-bold text-lg tracking-wider text-[#323843]">НИКНЕМ: ТУЧЕНЦИЯ!</span>
+                </div>
+            </div>
+
+            <h1 class="font-marker text-6xl md:text-8xl text-[#CBE857] mb-4">ТУЧЕНЦИЯ</h1>
+            <h2 class="text-2xl md:text-3xl mb-8 opacity-90">ТВОРЧЕСКАЯ СТУДИЯ</h2>
+            <p class="text-xl max-w-2xl mx-auto mb-10 font-light">Розалия — художник и дизайнер. Создаю иллюстрации, акварельные работы и цифровой дизайн для брендов и вдохновения.</p>
+        </div>
+
+        <!-- Frog on swing -->
+        <div class="absolute bottom-10 left-6 md:left-16 float-anim">
+            <img src="https://i.ibb.co/1t881GSL/res-25.png" alt="Лягушка на качелях" class="w-36 md:w-40 h-auto drop-shadow-lg">
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-20 px-6 bg-opacity-50 relative">
+        <!-- Decorative purple star -->
+        <svg class="star-burst top-10 right-10 twinkle" width="35" height="35" viewBox="0 0 40 40" fill="none" style="animation-delay:0.3s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
+        </svg>
+
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">ПОРТФОЛИО</h2>
+            
+            <div id="port-filters" class="flex flex-wrap justify-center gap-4 mb-12">
+                <!-- Filters will be injected by JS -->
+            </div>
+
+            <div id="port-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Items will be injected by JS -->
+            </div>
+
+            <div id="show-all-wrapper" class="text-center mt-10">
+                <!-- Button "Show all" will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox (просмотр картинок) -->
+    <div id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения">
+        <button id="lightbox-close" class="lightbox-btn" aria-label="Закрыть">&times;</button>
+        <button id="lightbox-prev" class="lightbox-btn" aria-label="Предыдущая">&#8249;</button>
+        <img id="lightbox-img" src="" alt="Работа">
+        <button id="lightbox-next" class="lightbox-btn" aria-label="Следующая">&#8250;</button>
+        <div id="lightbox-counter"></div>
+    </div>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 px-6 relative">
+        <!-- Decorative banner -->
+        <div class="text-center mb-6">
+            <img src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Мои навыки" class="inline-block w-64 md:w-80 h-auto" style="mix-blend-mode: screen;">
+        </div>
+        <!-- Decorative stars -->
+        <svg class="star-burst top-20 left-8 twinkle" width="28" height="28" viewBox="0 0 40 40" fill="none" style="animation-delay:0.7s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
+        </svg>
+
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">УСЛУГИ</h2>
+            <div id="serv-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Services will be injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop Section -->
+    <section id="shop" class="py-20 px-6 relative">
+        <svg class="star-burst top-16 right-12 twinkle" width="30" height="30" viewBox="0 0 40 40" fill="none" style="animation-delay:1.2s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
+        </svg>
+
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">МАГАЗИН</h2>
+            <p class="text-center opacity-80 mb-12 max-w-2xl mx-auto">Доставка не входит в стоимость товара и оплачивается отдельно (СДЭК, Почта России). Стоимость рассчитывается при оформлении заказа.</p>
+            <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Shop items will be injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-6 bg-opacity-50 relative overflow-hidden">
+        <!-- Lavender banner like in the reference image -->
+        <div class="absolute top-8 left-1/2 transform -translate-x-1/2 z-10 hidden md:block">
+            <div class="lavender-banner relative">
+                <div class="swing-ropes" style="top:-18px">
+                    <div class="rope" style="height:18px"></div>
+                    <div class="rope" style="height:18px; margin-left:40px"></div>
+                    <div class="rope" style="height:18px; margin-left:40px"></div>
+                </div>
+                <span class="font-bold text-md tracking-wider text-[#323843]">ПРИВЕТСТВУЮ! МЕНЯ ЗОВУТ РОЗАЛИЯ, Я — ГРАФИЧЕСКИЙ ДИЗАЙНЕР / ХУДОЖНИК</span>
+            </div>
+        </div>
+
+        <!-- Decorative stars -->
+        <svg class="star-burst top-32 right-10 twinkle" width="32" height="32" viewBox="0 0 40 40" fill="none" style="animation-delay:0.4s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
+        </svg>
+        <svg class="star-burst bottom-20 left-12 twinkle" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:1.1s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
+        </svg>
+
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-12 relative mt-16 md:mt-12">
+            <div class="w-full md:w-1/2 rounded-3xl overflow-hidden border-4 border-[#CBE857] glow-border relative">
+                <!-- Small decorative star on photo corner -->
+                <svg class="absolute -top-3 -right-3 z-10" width="26" height="26" viewBox="0 0 40 40" fill="none">
+                    <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
+                </svg>
+                <!-- ВСТАВЬТЕ СЮДА ССЫЛКУ НА ФОТО В АТРИБУТ src -->
+                <img id="about-img" src="https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg" alt="Rozaliya" class="w-full h-auto">
+            </div>
+            <div class="w-full md:w-1/2 text-left relative">
+                <!-- Decorative frame behind text -->
+                <img src="https://i.ibb.co/sJ1rc7vs/res-19.png" alt="" class="absolute -inset-8 w-[calc(100%+4rem)] h-[calc(100%+4rem)] object-contain opacity-30 pointer-events-none">
+                <h2 class="text-4xl font-bold mb-6">Обо мне</h2>
+                <p class="text-lg leading-relaxed mb-6">
+                    Привет! Я Розалия. Моя страсть — создание уникальных рисунков, одежды и аксессуаров в собственном стиле с элементами ручной работы. Опыт в иллюстрации и дизайне более 5 лет. Умею сочетать эстетику и смысл.
+                </p>
+                <a href="https://t.me/tychenciya" target="_blank" class="btn-tuch px-8 py-3 font-bold inline-block">Связаться в Telegram</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 text-center relative">
+        <svg class="star-burst top-10 left-16 twinkle" width="28" height="28" viewBox="0 0 40 40" fill="none" style="animation-delay:0.6s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
+        </svg>
+
+        <!-- Frog decoration -->
+        <div class="absolute bottom-4 right-4 md:right-16 opacity-90 float-anim">
+            <img src="https://i.ibb.co/hFQp7tCk/res-22.png" alt="Лягушка" class="w-24 md:w-32 h-auto drop-shadow-lg" style="mix-blend-mode: screen;">
+        </div>
+
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-8">КОНТАКТЫ</h2>
+            <p class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
+            <div class="flex flex-col gap-3 text-lg">
+                <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
+                <a href="tychenciya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="8efaf7ede6ebe0ede7f7efb9b9b7cee9e3efe7e2a0ede1e3">[email&#160;protected]</span></a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 text-center opacity-50 text-sm relative">
+        <svg class="star-burst bottom-2 right-8 twinkle" width="20" height="20" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s">
+            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF" opacity="0.6"/>
+        </svg>
+        <p>&copy; 2026 Тученция. Создано с любовью к искусству.</p>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        /* 
+           ============================================
+           КАК ЗАГРУЖАТЬ СВОИ КАРТИНКИ (ИНСТРУКЦИЯ)
+           ============================================
+           
+           1. Загрузите картинку на Imgur (imgur.com) или Cloudinary (cloudinary.com).
+           2. Получите прямую ссылку на изображение (URL, который заканчивается на .jpg, .png и т.д.).
+           3. Вставьте эту ссылку вместо текста "https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg" ниже.
+           
+           Пример для Imgur:
+           - Загружаете картинку → нажимаете на неё → ПКМ → "Копировать адрес изображения".
+           - Вставляете сюда между кавычками.
+        */
+
+        // Функция-хелпер: добавить любое количество фото в одну категорию
+        function addWorks(category, ...urls) {
+            return urls.map(url => ({ category, img: url }));
+        }
+
+        const portfolioItems = [
+            ...addWorks('Иллюстрация',
+               'https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg',
+               'https://i.ibb.co/dJDjxcmK/photo-2023-09-14-05-49-17.jpg',
+               'https://i.ibb.co/TqqjgBmX/photo-2024-02-14-00-31-25.jpg',
+               'https://i.ibb.co/Q7fSFSTC/image.jpg',
+               'https://i.ibb.co/rfGfJCG1/photo-2023-04-02-20-26-16.png',
+               'https://i.ibb.co/Ld7md4Y8/photo-2023-08-04-19-50-39.png',
+               'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png',
+               'https://i.ibb.co/PGt6FTYv/photo-2023-09-12-00-21-47.jpg'
+            ),
+            ...addWorks('Живопись',
+               'https://i.ibb.co/Z6QLH265/photo-4-2025-12-14-22-00-00.png',
+               'https://i.ibb.co/mCcyNf8N/photo-2025-12-14-15-07-47.png',
+               'https://i.ibb.co/0VFbQVhd/photo-2025-12-14-21-54-27.png',
+               'https://i.ibb.co/HpG0ZR1W/photo-1-2025-12-14-22-00-00.png',
+               'https://i.ibb.co/3YLQLg6j/photo-1-2026-03-20-09-18-30.jpg',
+               'https://i.ibb.co/tgNzG2K/photo-2-2025-12-14-22-00-00.png',
+               'https://i.ibb.co/Dsh7Q3b/photo-3-2025-12-14-22-00-00.png'
+            ),
+            ...addWorks('Дизайн',
+                'https://i.ibb.co/jv8MWDmV/image.png',
+                'https://i.ibb.co/QFFQcXVK/image.png',
+                'https://i.ibb.co/7tPLZ3HS/image.png',
+                'https://i.ibb.co/4RMJSZy1/image.png',
+                'https://i.ibb.co/gZd73RQ4/image.png',
+                'https://i.ibb.co/VYx6W03f/image.png',
+                'https://i.ibb.co/CpzRY106/image.png',
+                'https://i.ibb.co/tTh8YCTV/1080-1080-px.png',
+                'https://i.ibb.co/VY3vw74Z/Frame-1.png',
+                'https://i.ibb.co/FqYDDTNt/Frame-2.png',
+                'https://i.ibb.co/DP4g3FpJ/Frame-3.png',
+                'https://i.ibb.co/nMCX6KDf/Frame-4.png',
+                'https://i.ibb.co/SXrXnXTn/photo-25-2026-02-01-23-55-13.jpg',
+                'https://i.ibb.co/4ZNGnmXC/photo-2025-07-22-22-17-01.jpg',
+                'https://i.ibb.co/Xrn1YrNc/photo-2026-04-13-21-17-34.jpg',
+                'https://i.ibb.co/wFsbD5Zx/photo-2026-05-24-09-38-59.jpg',
+                'https://i.ibb.co/j9pVWmDX/1080-607-px.png'
+            ),
+            ...addWorks('Роспись одежды',
+                'https://i.ibb.co/rRs6Vbs4/IMG-9533.jpg',
+                'https://i.ibb.co/kVBq53MF/IMG-9535.jpg',
+                'https://i.ibb.co/7xg83R6V/IMG-9537.jpg',
+                'https://i.ibb.co/FkTDbQyg/IMG-9474.jpg',
+                'https://i.ibb.co/Cp3Rx6HK/IMG-9478.jpg',
+                'https://i.ibb.co/b5TYbLD8/IMG-9494.jpg',
+                'https://i.ibb.co/0Vfzv7N4/IMG-9497.jpg',
+                'https://i.ibb.co/27GB7fqJ/IMG-9529.jpg'
+            ),
+            ...addWorks('Аквагрим',
+                'https://i.ibb.co/8gzSkKZc/photo-2026-05-24-09-38-59.jpg',
+                'https://i.ibb.co/VcsZRFCb/IMG-20240115-180128.jpg',
+                'https://i.ibb.co/JRC5KZT0/photo-2024-09-12-13-45-08.jpg'
+            ),
+            ...addWorks('Фотография',
+                'https://i.ibb.co/yFczP9fG/photo-2026-04-25-21-31-28.jpg',
+                'https://i.ibb.co/zWJz9pvk/photo-2026-04-25-21-31-28-2.jpg',
+                'https://i.ibb.co/tPmPxG5y/photo-2026-04-25-21-31-29.jpg',
+                'https://i.ibb.co/NnKq62Mx/photo-2026-04-25-21-31-31.jpg',
+                'https://i.ibb.co/d0TgX3ZC/photo-2026-05-06-21-34-27.jpg',
+                'https://i.ibb.co/hxPwH2Yq/photo-2025-12-08-02-02-46.jpg',
+                'https://i.ibb.co/d0KdKjYp/photo-2025-12-08-02-02-52.jpg',
+                'https://i.ibb.co/7x0pXdMb/photo-2026-03-29-13-52-10.jpg',
+                'https://i.ibb.co/1G4GS8n7/photo-2026-03-29-13-52-14.jpg',
+                'https://i.ibb.co/v5KMvRH/photo-2026-04-12-12-17-42.jpg',
+                'https://i.ibb.co/jZP5fVt6/photo-2026-04-12-12-18-23.jpg',
+                'https://i.ibb.co/4wyD6RXq/photo-2026-04-12-12-18-26.jpg',
+                'https://i.ibb.co/PGj02Bz6/photo-2026-04-25-21-31-27.jpg',
+                'https://i.ibb.co/TD6cpKHv/photo-2026-04-25-21-31-27-2.jpg'
+            ),
+        ];
+
+        const services = [
+            { title: 'Иллюстрация', desc: 'Персонажи, сюжеты и концепты в авторском стиле.', price: 'от 1 500 ₽' },
+            { title: 'Живопись', desc: 'Картины и панно в авторском стиле.', price: 'от 5 000 ₽' },
+            { title: 'Роспись одежды', desc: 'Уникальные принты и роспись на текстиле.', price: 'от 3 000 ₽' },
+            { title: 'Дизайн: графический и полиграфический', desc: 'Логотипы, фирменный стиль, печатная продукция.', price: 'от 2 500 ₽' },
+            { title: 'Фотосъёмка', desc: 'Творческие и предметные фотосессии.', price: 'от 4 000 ₽' },
+            { title: 'Аквагрим', desc: 'Креативный грим для мероприятий, фестивалей и фотосессий. Открыта к сотрудничеству с ивент-агентствами, фотографами и студиями.', price: 'от 2 000 ₽' },
+        ];
+
+        const shopItems = [
+            // ВСТАВЬТЕ СВОИ ССЫЛКИ В ПОЛЕ img
+            { name: 'Оригинал картины',    img: 'https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg', price: '10 000 ₽' },
+            { name: 'Цифровая лицензия',   img: 'https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg', price: '500 ₽' },
+            { name: 'Авторский принт',     img: 'https://i.imgur.com/ЗАМЕНИ_НА_СВОЮ_ССЫЛКУ.jpg', price: '1 500 ₽' },
+            { name: 'Набор стикеров',      img: 'https://i.imgur.com/vngYHqp.jpeg', price: '300 ₽' },
+        ];
+
+        const tgUsername = 'tychenciya';
+
+        function makeTgLink(text) {
+            return `https://t.me/${tgUsername}?text=${encodeURIComponent(text)}`;
+        }
+
+        // Группируем портфолио по категориям
+        function groupPortfolio(items) {
+            const groups = {};
+            items.forEach(item => {
+                if (!groups[item.category]) groups[item.category] = [];
+                groups[item.category].push(item);
+            });
+            return groups;
+        }
+
+        let currentFilter = 'all';
+        let shownCount = 0;
+
+        function initSite() {
+            const portfolioGroups = groupPortfolio(portfolioItems);
+            const categories = ['Все', ...Object.keys(portfolioGroups)];
+
+            // Portfolio filters
+            const filterContainer = document.getElementById('port-filters');
+            categories.forEach((f, index) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-tuch px-4 py-1 text-sm uppercase tracking-widest ${index === 0 ? 'filter-active' : ''}`;
+                btn.innerText = f;
+                btn.dataset.filter = f === 'Все' ? 'all' : f;
+                btn.onclick = () => filterPortfolio(btn.dataset.filter);
+                filterContainer.appendChild(btn);
+            });
+
+            // Portfolio Grid - сначала показываем только первую картинку каждой категории
+            const grid = document.getElementById('port-grid');
+            const categoryNames = Object.keys(portfolioGroups);
+            
+            // Сначала добавляем все превью (по одной обложке на категорию)
+            categoryNames.forEach(cat => {
+                const items = portfolioGroups[cat];
+                const first = items[0];
+                const divFirst = document.createElement('div');
+                divFirst.className = `card-tuch overflow-hidden aspect-square`;
+                divFirst.dataset.category = first.category;
+                divFirst.dataset.preview = 'true';
+                divFirst.innerHTML = `<img src="${first.img}" class="w-full h-full object-cover">`;
+                grid.appendChild(divFirst);
+            });
+
+            // Затем добавляем все остальные работы — они появятся внизу, над кнопкой "Показать ещё"
+            categoryNames.forEach(cat => {
+                const items = portfolioGroups[cat];
+                for (let i = 1; i < items.length; i++) {
+                    const div = document.createElement('div');
+                    div.className = `card-tuch overflow-hidden aspect-square`;
+                    div.dataset.category = items[i].category;
+                    div.dataset.extra = 'true';
+                    div.style.display = 'none';
+                    div.innerHTML = `<img src="${items[i].img}" class="w-full h-full object-cover">`;
+                    grid.appendChild(div);
+                }
+            });
+
+            // Кнопка "Показать ещё"
+            const showAllWrapper = document.getElementById('show-all-wrapper');
+            const showMoreBtn = document.createElement('button');
+            showMoreBtn.id = 'show-more-btn';
+            showMoreBtn.className = 'btn-tuch px-8 py-3 font-bold uppercase tracking-wide';
+            showMoreBtn.innerText = 'Показать ещё ↓';
+            showMoreBtn.onclick = () => {
+                shownCount += 6;
+                renderPortfolioVisibility();
+            };
+            showAllWrapper.appendChild(showMoreBtn);
+
+            // Services
+            const servGrid = document.getElementById('serv-grid');
+            services.forEach(s => {
+                const div = document.createElement('div');
+                div.className = `card-tuch p-6 flex flex-col justify-between`;
+                const tgText = `Здравствуйте! Интересует услуга «${s.title}». Расскажите, пожалуйста, подробнее о сроках и стоимости.`;
+                div.innerHTML = `
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">${s.title}</h3>
+                        <p class="opacity-80 mb-4">${s.desc}</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="font-bold">${s.price}</div>
+                        <a href="${makeTgLink(tgText)}" target="_blank" class="btn-tuch px-4 py-2 text-sm uppercase tracking-wide">Заказать</a>
+                    </div>
+                `;
+                servGrid.appendChild(div);
+            });
+
+            // Shop
+            const shopGrid = document.getElementById('shop-grid');
+            shopItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `card-tuch p-4 text-center`;
+                const tgText = `Здравствуйте! Хочу приобрести «${item.name}». Подскажите, пожалуйста, как оформить заказ?`;
+                div.innerHTML = `
+                    <img src="${item.img}" class="w-full aspect-square object-cover mb-4 rounded-lg">
+                    <h3 class="font-bold mb-2">${item.name}</h3>
+                    <p class="mb-4 font-mono">${item.price}</p>
+                    <a href="${makeTgLink(tgText)}" target="_blank" class="btn-tuch w-full py-2 text-xs uppercase inline-block">Купить</a>
+                `;
+                shopGrid.appendChild(div);
+            });
+
+            // Устанавливаем начальную видимость портфолио и состояние кнопки "Показать ещё"
+            renderPortfolioVisibility();
+        }
+
+        function renderPortfolioVisibility() {
+            const items = document.querySelectorAll('#port-grid > div');
+            let extraIndex = 0;
+            let remainingHidden = 0;
+
+            items.forEach(item => {
+                if (currentFilter === 'all') {
+                    // Режим "Все": превью (по одной обложке на категорию) видны всегда,
+                    // остальные работы открываются постепенно кнопкой "Показать ещё"
+                    if (item.dataset.preview === 'true') {
+                        item.style.display = '';
+                    } else if (item.dataset.extra === 'true') {
+                        if (extraIndex < shownCount) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                            remainingHidden++;
+                        }
+                        extraIndex++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                } else {
+                    // Конкретная категория — сразу показываем ВСЕ работы этой категории,
+                    // без кнопки "Показать ещё"
+                    item.style.display = (item.dataset.category === currentFilter) ? '' : 'none';
+                }
+            });
+
+            // Кнопка "Показать ещё" работает ТОЛЬКО в категории "Все".
+            // В любой другой категории она полностью скрыта, а все картинки видны сразу.
+            const wrapper = document.getElementById('show-all-wrapper');
+            const btn = document.getElementById('show-more-btn');
+            if (currentFilter === 'all') {
+                wrapper.style.display = '';
+                if (btn) btn.style.display = (remainingHidden > 0) ? '' : 'none';
+            } else {
+                wrapper.style.display = 'none';
+                if (btn) btn.style.display = 'none';
+            }
+        }
+
+        function filterPortfolio(category) {
+            currentFilter = category;
+
+            const buttons = document.querySelectorAll('#port-filters button');
+            buttons.forEach(b => b.classList.remove('filter-active'));
+            const activeBtn = Array.from(buttons).find(b => b.dataset.filter === category);
+            if (activeBtn) activeBtn.classList.add('filter-active');
+
+            renderPortfolioVisibility();
+        }
+
+        /* ===== Лайтбокс: открытие картинок портфолио ===== */
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCounter = document.getElementById('lightbox-counter');
+        let lightboxList = [];   // список src сейчас видимых картинок
+        let lightboxIndex = 0;
+
+        function getVisiblePortfolioImages() {
+            const imgs = [];
+            document.querySelectorAll('#port-grid > div').forEach(div => {
+                if (div.style.display !== 'none') {
+                    const img = div.querySelector('img');
+                    if (img) imgs.push(img.getAttribute('src'));
+                }
+            });
+            return imgs;
+        }
+
+        function openLightbox(src) {
+            lightboxList = getVisiblePortfolioImages();
+            lightboxIndex = Math.max(0, lightboxList.indexOf(src));
+            updateLightbox();
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function updateLightbox() {
+            if (!lightboxList.length) return;
+            lightboxImg.src = lightboxList[lightboxIndex];
+            const multiple = lightboxList.length > 1;
+            lightboxCounter.style.display = multiple ? '' : 'none';
+            document.getElementById('lightbox-prev').style.display = multiple ? '' : 'none';
+            document.getElementById('lightbox-next').style.display = multiple ? '' : 'none';
+            lightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxList.length}`;
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function lightboxStep(dir) {
+            if (!lightboxList.length) return;
+            lightboxIndex = (lightboxIndex + dir + lightboxList.length) % lightboxList.length;
+            updateLightbox();
+        }
+
+        // Клик по картинке в портфолио — открыть лайтбокс (делегирование событий)
+        document.getElementById('port-grid').addEventListener('click', e => {
+            const img = e.target.closest('img');
+            if (img) openLightbox(img.getAttribute('src'));
+        });
+
+        // Управление лайтбоксом
+        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+        document.getElementById('lightbox-prev').addEventListener('click', e => { e.stopPropagation(); lightboxStep(-1); });
+        document.getElementById('lightbox-next').addEventListener('click', e => { e.stopPropagation(); lightboxStep(1); });
+        // Клик по тёмному фону закрывает окно
+        lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+        // Управление с клавиатуры
+        document.addEventListener('keydown', e => {
+            if (!lightbox.classList.contains('open')) return;
+            if (e.key === 'Escape') closeLightbox();
+            else if (e.key === 'ArrowLeft') lightboxStep(-1);
+            else if (e.key === 'ArrowRight') lightboxStep(1);
+        });
+
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                menuBtn.children[0].classList.add('rotate-45', 'translate-y-2');
+                menuBtn.children[1].classList.add('opacity-0');
+                menuBtn.children[2].classList.add('-rotate-45', '-translate-y-2');
+            } else {
+                mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                menuBtn.children[0].classList.remove('rotate-45', 'translate-y-2');
+                menuBtn.children[1].classList.remove('opacity-0');
+                menuBtn.children[2].classList.remove('-rotate-45', '-translate-y-2');
+            }
+        });
+
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                menuBtn.children[0].classList.remove('rotate-45', 'translate-y-2');
+                menuBtn.children[1].classList.remove('opacity-0');
+                menuBtn.children[2].classList.remove('-rotate-45', '-translate-y-2');
+            });
+        });
+
+        window.onload = initSite;
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a175f65aaab5f113',t:'MTc4MzQxODAwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
