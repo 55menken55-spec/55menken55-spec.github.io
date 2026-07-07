@@ -227,7 +227,8 @@
             display: none !important;
         }
 
-        .card-tuch img {
+        /* Кликабельные картинки по всему сайту */
+        .card-tuch img, #about-img {
             cursor: pointer;
         }
 
@@ -595,7 +596,7 @@
                     </p>
                 </div>
 
-                <!-- Убрана надпись "WINK-FROG!". Осталась только большая подмигивающая лягушка как на референсе -->
+                <!-- Лягушка -->
                 <div class="mt-8 flex items-center gap-3 self-start">
                     <img src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Wink Frog" class="w-24 h-24 object-contain filter drop-shadow-[0_4px_12px_rgba(203,232,87,0.35)]" style="mix-blend-mode: screen;">
                 </div>
@@ -603,18 +604,18 @@
 
             <!-- Правая колонка: Вертикальное большое фото с розовой звездочкой -->
             <div class="w-full md:w-1/2 flex justify-center relative">
-                <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-xs md:max-w-sm w-full border-4 border-[#C68DFF] group">
+                <div id="about-photo-wrapper" class="relative rounded-3xl overflow-hidden shadow-2xl max-w-xs md:max-w-sm w-full border-4 border-[#C68DFF]">
                     
                     <!-- Розовая звездочка поверх волос/фотографии -->
                     <div class="absolute top-12 right-12 z-20 text-3xl select-none filter drop-shadow-md animate-pulse">
                         ⭐
                     </div>
 
-                    <!-- Фотография -->
-                    <img id="about-img" src="https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg" alt="Розалия | Тученция" class="w-full aspect-[3/4] object-cover filter brightness-95 group-hover:scale-105 transition-transform duration-300">
+                    <!-- Фотография (Кликабельна для открытия в лайтбоксе!) -->
+                    <img id="about-img" onclick="openLightbox(this.src)" src="https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg" alt="Розалия | Тученция" class="w-full aspect-[3/4] object-cover filter brightness-95 transition-transform duration-300">
                     
                     <!-- Оверлей админа -->
-                    <div class="absolute inset-0 bg-black/75 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div id="about-admin-overlay" class="hidden absolute inset-0 bg-black/75 flex items-center justify-center">
                         <button onclick="triggerReplaceAboutImage()" class="bg-[#CBE857] text-[#323843] font-bold px-6 py-2.5 rounded-full text-xs uppercase hover:scale-105 transition">
                             Сменить фото автора
                         </button>
@@ -985,6 +986,7 @@
             const indicator = document.getElementById('admin-indicator');
             const apiKeyInput = document.getElementById('imgbb-api-key');
             const secretStar = document.getElementById('admin-secret-star');
+            const aboutOverlay = document.getElementById('about-admin-overlay');
 
             if (isAdmin) {
                 uploadPanel.classList.remove('hidden');
@@ -993,12 +995,22 @@
                 apiKeyInput.value = imgbbApiKey;
                 secretStar.setAttribute('fill', '#CBE857');
                 enableTextEditing(true);
+                
+                if (aboutOverlay) {
+                    aboutOverlay.style.display = 'flex';
+                    document.getElementById('about-photo-wrapper').classList.add('group');
+                }
             } else {
                 uploadPanel.classList.add('hidden');
                 shopPanel.classList.add('hidden');
                 indicator.classList.add('hidden');
                 secretStar.setAttribute('fill', '#C68DFF');
                 enableTextEditing(false);
+
+                if (aboutOverlay) {
+                    aboutOverlay.style.display = 'none';
+                    document.getElementById('about-photo-wrapper').classList.remove('group');
+                }
             }
         }
 
@@ -1235,26 +1247,47 @@
             initSite();
         }
 
+        /* ===== Умный универсальный Лайтбокс для картинок по всему сайту ===== */
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxCounter = document.getElementById('lightbox-counter');
         let lightboxList = [];
         let lightboxIndex = 0;
 
-        function getVisiblePortfolioImages() {
-            const imgs = [];
-            document.querySelectorAll('#port-grid > div').forEach(div => {
-                if (div.style.display !== 'none' && !div.classList.contains('hidden-item')) {
-                    const img = div.querySelector('img');
-                    if (img) imgs.push(img.getAttribute('src'));
-                }
-            });
-            return imgs;
+        // Собирает все картинки из активного на данный момент контекста просмотра
+        function getVisibleImagesInContext(currentSrc) {
+            const list = [];
+            
+            // 1. Проверяем, находится ли кликнутый элемент в разделе Портфолио
+            const isInPortfolio = Array.from(document.querySelectorAll('#port-grid img')).some(img => img.src === currentSrc);
+            if (isInPortfolio) {
+                document.querySelectorAll('#port-grid > div').forEach(div => {
+                    if (div.style.display !== 'none' && !div.classList.contains('hidden-item')) {
+                        const img = div.querySelector('img');
+                        if (img) list.push(img.src);
+                    }
+                });
+                return list;
+            }
+
+            // 2. Проверяем, находится ли кликнутый элемент в разделе Магазин
+            const isInShop = Array.from(document.querySelectorAll('#shop-grid img')).some(img => img.src === currentSrc);
+            if (isInShop) {
+                document.querySelectorAll('#shop-grid img').forEach(img => {
+                    list.push(img.src);
+                });
+                return list;
+            }
+
+            // 3. Если это одиночное фото (например, Обо мне), возвращаем список из одного элемента
+            return [currentSrc];
         }
 
         function openLightbox(src) {
+            // В режиме админа клик по кнопке "Заменить" не должен открывать просмотр
             if (isAdmin && event.target.tagName === 'BUTTON') return;
-            lightboxList = getVisiblePortfolioImages();
+
+            lightboxList = getVisibleImagesInContext(src);
             lightboxIndex = Math.max(0, lightboxList.indexOf(src));
             updateLightbox();
             lightbox.classList.add('open');
@@ -1291,13 +1324,15 @@
             preloadNextLightboxImage();
         }
 
-        document.getElementById('port-grid').addEventListener('click', e => {
+        // Слушатель кликов по Магазину (делегирование событий)
+        document.getElementById('shop-grid').addEventListener('click', e => {
             const img = e.target.closest('img');
             if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
-                openLightbox(img.getAttribute('src'));
+                openLightbox(img.src);
             }
         });
 
+        // Клик по закрытию и стрелочкам лайтбокса
         document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
         document.getElementById('lightbox-prev').addEventListener('click', e => { e.stopPropagation(); lightboxStep(-1); });
         document.getElementById('lightbox-next').addEventListener('click', e => { e.stopPropagation(); lightboxStep(1); });
