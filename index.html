@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO-оптимизация (Поисковое продвижение Яндекса и Google) -->
+    <!-- SEO-оптимизация -->
     <title>Тученция | Творческая студия художника и графического дизайнера Розалии</title>
     <meta name="description" content="Творческая студия художника и графического дизайнера Розалии (Тученция). Авторские иллюстрации, живопись, акварель, роспись одежды, аквагрим и графический дизайн под заказ.">
     <meta name="keywords" content="Розалия, Тученция, творческая студия, графический дизайн, заказать иллюстрацию, роспись одежды, аквагрим, живопись, художник Самара">
     <meta name="author" content="Тученция">
     <meta name="robots" content="index, follow">
 
-    <!-- Open Graph (Красивые превью-карточки при отправке ссылки в Telegram, VK, WhatsApp) -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Тученция | Творческая студия Розалии">
     <meta property="og:description" content="Авторские иллюстрации, профессиональный графический дизайн, уникальная роспись одежды и живопись на заказ.">
     <meta property="og:image" content="https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg">
     <meta property="og:url" content="https://t.me/tychenciya">
 
-    <!-- Предзагрузка критически важных шрифтов и стилей (Снижает показатель LCP) -->
+    <!-- Предзагрузка шрифтов -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap" rel="stylesheet">
@@ -210,7 +210,6 @@
             color: var(--tuch-dark) !important;
         }
 
-        /* Floating decoration animation (Оптимизирована производительность через translate3d) */
         @keyframes float {
             0%, 100% { transform: translate3d(0, 0, 0); }
             50% { transform: translate3d(0, -10px, 0); }
@@ -228,12 +227,11 @@
             display: none !important;
         }
 
-        /* Кликабельные картинки портфолио */
         .card-tuch img {
             cursor: pointer;
         }
 
-        /* Лайтбокс для просмотра картинок */
+        /* Лайтбокс */
         #lightbox {
             position: fixed;
             inset: 0;
@@ -311,7 +309,6 @@
             #lightbox-next { right: 8px; }
         }
 
-        /* Стили админки */
         .admin-badge {
             background-color: var(--tuch-lime);
             color: var(--tuch-dark);
@@ -323,7 +320,6 @@
             display: inline-block;
         }
 
-        /* Спиннер загрузки */
         .loader {
             border: 3px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
@@ -338,7 +334,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Рамка для редактируемых текстов */
         .editable-active {
             outline: 2px dashed var(--tuch-lime);
             outline-offset: 4px;
@@ -366,7 +361,7 @@
         </button>
     </nav>
 
-    <!-- Mobile/dropdown menu (full-width bar below nav) -->
+    <!-- Mobile/dropdown menu -->
     <div id="mobile-menu" class="fixed top-[88px] left-0 w-full z-40 bg-[#323843]/95 backdrop-blur-md border-b-2 border-[#CBE857]/60 shadow-lg -translate-y-4 opacity-0 pointer-events-none transition-all duration-300">
         <div class="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <a href="#about" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Обо мне</a>
@@ -391,7 +386,6 @@
         </svg>
 
         <div class="max-w-4xl mx-auto relative">
-            <!-- Banner with nickname -->
             <div class="mb-8">
                 <div class="lavender-banner inline-block relative">
                     <div class="swing-ropes">
@@ -415,7 +409,6 @@
 
     <!-- Portfolio Section -->
     <section id="portfolio" class="py-20 px-6 bg-opacity-50 relative">
-        <!-- Decorative purple star -->
         <svg class="star-burst top-10 right-10 twinkle" width="35" height="35" viewBox="0 0 40 40" fill="none" style="animation-delay:0.3s">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
         </svg>
@@ -423,7 +416,7 @@
         <div class="max-w-6xl mx-auto">
             <h2 class="text-4xl font-bold text-center mb-6">ПОРТФОЛИО</h2>
 
-            <!-- Admin upload panel (hidden by default) -->
+            <!-- Admin upload panel -->
             <div id="admin-upload-panel" class="hidden mb-12 p-6 rounded-2xl border-2 border-dashed border-[#CBE857] bg-white/5 max-w-2xl mx-auto">
                 <h3 class="text-xl font-bold mb-4 text-[#CBE857] flex items-center gap-2">
                     <span>☁️ Быстрая загрузка на ImgBB</span>
@@ -459,11 +452,10 @@
                     </div>
                 </div>
 
-                <!-- Method File (ImgBB Auto-Upload) -->
+                <!-- Method File -->
                 <div id="method-file-container" class="mb-4">
                     <label class="block text-sm mb-1 opacity-80">Выберите файл изображения:</label>
                     <input type="file" id="admin-new-file" accept="image/*" class="w-full text-white/80 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#C68DFF] file:text-white hover:file:bg-[#CBE857] hover:file:text-[#323843]">
-                    <span class="text-xs text-white/50 mt-1 block">Файл будет автоматически отправлен на ImgBB.com, а полученная прямая ссылка мгновенно сохранится в ваше портфолио!</span>
                 </div>
 
                 <!-- Method URL -->
@@ -497,12 +489,12 @@
         </div>
     </section>
 
-    <!-- Hidden input for replacement dialog with auto ImgBB upload -->
+    <!-- Hidden inputs for admin tools -->
     <input type="file" id="replace-file-input" class="hidden" accept="image/*">
-    <!-- Скрытый инпут для замены картинок в разделе Магазин -->
     <input type="file" id="replace-shop-file-input" class="hidden" accept="image/*">
+    <input type="file" id="replace-about-file-input" class="hidden" accept="image/*">
 
-    <!-- Lightbox (просмотр картинок) -->
+    <!-- Lightbox -->
     <div id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения">
         <button id="lightbox-close" class="lightbox-btn" aria-label="Закрыть">&times;</button>
         <button id="lightbox-prev" class="lightbox-btn" aria-label="Предыдущая">&#8249;</button>
@@ -513,11 +505,9 @@
 
     <!-- Services Section -->
     <section id="services" class="py-20 px-6 relative">
-        <!-- Decorative banner -->
         <div class="text-center mb-6">
             <img src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Мои навыки" class="inline-block w-64 md:w-80 h-auto" style="mix-blend-mode: screen;" loading="lazy">
         </div>
-        <!-- Decorative stars -->
         <svg class="star-burst top-20 left-8 twinkle" width="28" height="28" viewBox="0 0 40 40" fill="none" style="animation-delay:0.7s">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
         </svg>
@@ -540,7 +530,7 @@
             <h2 class="text-4xl font-bold text-center mb-4">МАГАЗИН</h2>
             <p class="text-center opacity-80 mb-12 max-w-2xl mx-auto">Доставка не входит в стоимость товара и оплачивается отдельно (СДЭК, Почта России). Стоимость рассчитывается при оформлении заказа.</p>
             
-            <!-- Панель добавления товара в Магазин (видят только админы) -->
+            <!-- Панель добавления товара в Магазин -->
             <div id="admin-shop-panel" class="hidden mb-12 p-6 rounded-2xl border-2 border-dashed border-[#C68DFF] bg-white/5 max-w-2xl mx-auto text-left">
                 <h3 class="text-xl font-bold mb-4 text-[#C68DFF] flex items-center gap-2">
                     <span>🛍️ Добавить товар в Магазин</span>
@@ -558,7 +548,6 @@
                 <div class="mb-4">
                     <label class="block text-sm mb-1 opacity-80">Фотография товара:</label>
                     <input type="file" id="shop-new-file" accept="image/*" class="w-full text-white/80 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#CBE857] file:text-[#323843] hover:file:bg-[#C68DFF] hover:file:text-white">
-                    <span class="text-xs text-white/50 mt-1 block">Изображение товара автоматически загрузится в облако ImgBB!</span>
                 </div>
                 <div class="flex justify-end">
                     <button onclick="addNewShopItem()" class="btn-tuch px-6 py-2 text-sm font-bold uppercase">Добавить в магазин</button>
@@ -571,46 +560,68 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-20 px-6 bg-opacity-50 relative overflow-hidden">
-        <!-- Lavender banner like in the reference image -->
-        <div class="absolute top-8 left-1/2 transform -translate-x-1/2 z-10 hidden md:block">
-            <div class="lavender-banner relative">
-                <div class="swing-ropes" style="top:-18px">
-                    <div class="rope" style="height:18px"></div>
-                    <div class="rope" style="height:18px; margin-left:40px"></div>
-                    <div class="rope" style="height:18px; margin-left:40px"></div>
+    <!-- Секция Обо мне (Стилизация в соответствии с присланным изображением и новым аватаром) -->
+    <section id="about" class="py-20 px-6 relative overflow-hidden bg-[#323843] border-t-4 border-b-4 border-[#CBE857]/20">
+        <!-- Декоративные бабочки и звездочки как на референсе -->
+        <span class="absolute top-10 right-10 text-4xl float-anim opacity-80 pointer-events-none select-none">🦋</span>
+        <span class="absolute bottom-10 left-10 text-3xl float-anim-delay opacity-60 pointer-events-none select-none">✨</span>
+
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative">
+            
+            <!-- Левая колонка с кастомным оформлением текстов и стильной лягушкой -->
+            <div class="w-full md:w-1/2 text-left relative flex flex-col justify-between">
+                
+                <!-- Огромный заголовок "О СЕБЕ" в стиле граффити/бабл -->
+                <div class="mb-6 select-none flex items-center gap-1">
+                    <span class="text-[#CBE857] text-6xl md:text-7xl font-black font-marker tracking-wide drop-shadow-[0_4px_0_rgba(0,0,0,0.4)] uppercase">
+                        : О СЕБЕ
+                    </span>
+                    <span class="text-white text-3xl animate-pulse">✦</span>
                 </div>
-                <span id="about-banner-text" data-edit-id="about-banner" class="font-bold text-md tracking-wider text-[#323843]">ПРИВЕТСТВУЮ! МЕНЯ ЗОВУТ РОЗАЛИЯ, Я — ГРАФИЧЕСКИЙ ДИЗАЙНЕР / ХУДОЖНИК</span>
-            </div>
-        </div>
 
-        <!-- Decorative stars -->
-        <svg class="star-burst top-32 right-10 twinkle" width="32" height="32" viewBox="0 0 40 40" fill="none" style="animation-delay:0.4s">
-            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
-        </svg>
-        <svg class="star-burst bottom-20 left-12 twinkle" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:1.1s">
-            <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
-        </svg>
+                <!-- Блок текстов -->
+                <div class="space-y-6 text-white/90 text-[15px] leading-relaxed max-w-md">
+                    <p id="about-p1" data-edit-id="about-paragraph-1" class="font-bold text-white tracking-wide">
+                        Привет! Я Розалия.
+                    </p>
+                    <p id="about-p2" data-edit-id="about-paragraph-2" class="font-light text-sm text-gray-300">
+                        <strong class="text-[#CBE857] font-bold">Моя страсть</strong> - это создание уникальных рисунков, которые выходят за рамки кожи холста. От детализированных портретов для самых близких людей акрилом до росписи одежды, кастомизацией ТГ и логотипов абсолютно любого формата - я вкладываю душу в каждую работу.
+                    </p>
+                    <p id="about-p3" data-edit-id="about-paragraph-3" class="font-bold text-white text-sm">
+                        Давайте вместе создадим что-то невероятное!
+                    </p>
+                    <p id="about-p4" data-edit-id="about-paragraph-4" class="font-bold text-[#C68DFF] italic tracking-wider text-sm">
+                        Твой master Тученция
+                    </p>
+                </div>
 
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-12 relative mt-16 md:mt-12">
-            <div class="w-full md:w-1/2 rounded-3xl overflow-hidden border-4 border-[#CBE857] glow-border relative">
-                <!-- Small decorative star on photo corner -->
-                <svg class="absolute -top-3 -right-3 z-10" width="26" height="26" viewBox="0 0 40 40" fill="none">
-                    <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
-                </svg>
-                <!-- ВСТАВЬТЕ СЮДА ССЫЛКУ НА ФОТО В АТРИБУТ src -->
-                <img id="about-img" src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Rozaliya" class="w-full h-auto" loading="lazy">
+                <!-- Убрана надпись "WINK-FROG!". Осталась только большая подмигивающая лягушка как на референсе -->
+                <div class="mt-8 flex items-center gap-3 self-start">
+                    <img src="https://i.ibb.co/pjh6V01C/res-23.png" alt="Wink Frog" class="w-24 h-24 object-contain filter drop-shadow-[0_4px_12px_rgba(203,232,87,0.35)]" style="mix-blend-mode: screen;">
+                </div>
             </div>
-            <div class="w-full md:w-1/2 text-left relative">
-                <!-- Decorative frame behind text -->
-                <img src="https://i.ibb.co/sJ1rc7vs/res-19.png" alt="" class="absolute -inset-8 w-[calc(100%+4rem)] h-[calc(100%+4rem)] object-contain opacity-30 pointer-events-none" loading="lazy">
-                <h2 id="about-title" data-edit-id="about-h2" class="text-4xl font-bold mb-6">Обо мне</h2>
-                <p id="about-desc" data-edit-id="about-p" class="text-lg leading-relaxed mb-6">
-                    Привет! Я Розалия. Моя страсть — создание уникальных рисунков, одежды и аксессуаров в собственном стиле с элементами ручной работы. Опыт в иллюстрации и дизайне более 5 лет. Умею сочетать эстетику и смысл.
-                </p>
-                <a href="https://t.me/tychenciya" target="_blank" class="btn-tuch px-8 py-3 font-bold inline-block">Связаться в Telegram</a>
+
+            <!-- Правая колонка: Вертикальное большое фото с розовой звездочкой -->
+            <div class="w-full md:w-1/2 flex justify-center relative">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-xs md:max-w-sm w-full border-4 border-[#C68DFF] group">
+                    
+                    <!-- Розовая звездочка поверх волос/фотографии -->
+                    <div class="absolute top-12 right-12 z-20 text-3xl select-none filter drop-shadow-md animate-pulse">
+                        ⭐
+                    </div>
+
+                    <!-- Фотография -->
+                    <img id="about-img" src="https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg" alt="Розалия | Тученция" class="w-full aspect-[3/4] object-cover filter brightness-95 group-hover:scale-105 transition-transform duration-300">
+                    
+                    <!-- Оверлей админа -->
+                    <div class="absolute inset-0 bg-black/75 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <button onclick="triggerReplaceAboutImage()" class="bg-[#CBE857] text-[#323843] font-bold px-6 py-2.5 rounded-full text-xs uppercase hover:scale-105 transition">
+                            Сменить фото автора
+                        </button>
+                    </div>
+                </div>
             </div>
+
         </div>
     </section>
 
@@ -636,7 +647,6 @@
     </section>
 
     <footer class="py-10 text-center opacity-50 text-sm relative">
-        <!-- Секретный триггер: фиолетовая звездочка в самом низу справа. При нажатии активирует вход в админку! -->
         <svg id="admin-secret-star" onclick="toggleAdminMode()" class="star-burst bottom-4 right-8 twinkle cursor-pointer hover:scale-125 transition-transform" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s; pointer-events: auto;">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF" opacity="0.8"/>
         </svg>
@@ -644,7 +654,6 @@
     </footer>
 
     <script>
-        // Начальный (дефолтный) список картинок портфолио
         const defaultPortfolioItems = [
             { category: 'Иллюстрация', img: 'https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg' },
             { category: 'Иллюстрация', img: 'https://i.ibb.co/dJDjxcmK/photo-2023-09-14-05-49-17.jpg' },
@@ -710,7 +719,6 @@
             { category: 'Фотография', img: 'https://i.ibb.co/TD6cpKHv/photo-2026-04-25-21-31-27-2.jpg' }
         ];
 
-        // Дефолтные товары в Магазине
         const defaultShopItems = [
             { name: 'Оригинал картины',    img: 'https://i.ibb.co/Z6QLH265/photo-4-2025-12-14-22-00-00.png', price: '10 000 ₽' },
             { name: 'Цифровая лицензия',   img: 'https://i.ibb.co/Q7fSFSTC/image.jpg', price: '500 ₽' },
@@ -718,14 +726,10 @@
             { name: 'Набор стикеров',      img: 'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png', price: '300 ₽' },
         ];
 
-        // Инициализация портфолио и магазина из LocalStorage или дефолтных массивов
         let portfolioItems = JSON.parse(localStorage.getItem('tuch_portfolio')) || defaultPortfolioItems;
         let shopItems = JSON.parse(localStorage.getItem('tuch_shop')) || defaultShopItems;
 
-        // Состояние режима администратора
         let isAdmin = localStorage.getItem('tuch_isAdmin') === 'true';
-
-        // Ключ ImgBB API
         let imgbbApiKey = localStorage.getItem('tuch_imgbb_key') || '';
 
         const services = [
@@ -743,7 +747,6 @@
             return `https://t.me/${tgUsername}?text=${encodeURIComponent(text)}`;
         }
 
-        // Группируем портфолио по категориям
         function groupPortfolio(items) {
             const groups = {};
             items.forEach(item => {
@@ -754,19 +757,20 @@
         }
 
         let currentFilter = 'all';
-        let shownCount = 6; // по дефолту при "Все" показываем чуть больше
+        let shownCount = 6;
 
         function initSite() {
-            // Загрузка сохранённых текстов из LocalStorage (если они были отредактированы)
-            loadSavedTexts();
+            const savedAboutImg = localStorage.getItem('tuch_about_img');
+            if (savedAboutImg) {
+                document.getElementById('about-img').src = savedAboutImg;
+            }
 
-            // Отрисовка статуса админа
+            loadSavedTexts();
             updateAdminUI();
 
             const portfolioGroups = groupPortfolio(portfolioItems);
             const categories = ['Все', 'Иллюстрация', 'Живопись', 'Дизайн', 'Роспись одежды', 'Аквагрим', 'Фотография'];
 
-            // Portfolio filters
             const filterContainer = document.getElementById('port-filters');
             filterContainer.innerHTML = '';
             categories.forEach((f, index) => {
@@ -778,10 +782,8 @@
                 filterContainer.appendChild(btn);
             });
 
-            // Рендер грида портфолио
             renderPortfolioGrid();
 
-            // Services
             const servGrid = document.getElementById('serv-grid');
             servGrid.innerHTML = '';
             services.forEach(s => {
@@ -801,11 +803,9 @@
                 servGrid.appendChild(div);
             });
 
-            // Shop (Рендерится через JS)
             renderShopGrid();
         }
 
-        // Загрузка отредактированных текстов из LocalStorage
         function loadSavedTexts() {
             const savedTexts = JSON.parse(localStorage.getItem('tuch_texts')) || {};
             Object.keys(savedTexts).forEach(id => {
@@ -816,7 +816,6 @@
             });
         }
 
-        // Отрисовка сетки портфолио
         function renderPortfolioGrid() {
             const grid = document.getElementById('port-grid');
             grid.innerHTML = '';
@@ -825,10 +824,6 @@
             const categoryNames = Object.keys(portfolioGroups);
 
             if (currentFilter === 'all') {
-                // В режиме "Все" мы показываем по 1 первой работе от каждой категории,
-                // а затем остальные работы постепенно по клику на "Показать ещё"
-                
-                // 1. Превью (по 1 обложке)
                 let previewItems = [];
                 categoryNames.forEach(cat => {
                     const items = portfolioGroups[cat];
@@ -841,10 +836,8 @@
                     grid.appendChild(createCardElement(p.item, p.index, true, false, true, true));
                 });
 
-                // 2. Все остальные
                 let extraItems = [];
                 portfolioItems.forEach((item, idx) => {
-                    // Проверяем, не является ли этот элемент уже отрисованным превью
                     const isPreview = previewItems.some(p => p.index === idx);
                     if (!isPreview) {
                         extraItems.push({ item, idx });
@@ -853,16 +846,13 @@
 
                 extraItems.forEach((ex, index) => {
                     const isVisible = index < shownCount;
-                    // Для картинок ниже первого экрана используем lazy load
                     grid.appendChild(createCardElement(ex.item, ex.idx, false, true, isVisible, false));
                 });
 
-                // Кнопка "Показать ещё"
                 const remaining = extraItems.length - shownCount;
                 renderShowMoreButton(remaining > 0);
 
             } else {
-                // В режиме выбранной категории показываем вообще все работы этой категории без кнопки "Показать ещё"
                 portfolioItems.forEach((item, idx) => {
                     if (item.category === currentFilter) {
                         grid.appendChild(createCardElement(item, idx, false, false, true, false));
@@ -872,7 +862,6 @@
             }
         }
 
-        // Создание элемента карточки портфолио
         function createCardElement(item, globalIndex, isPreview, isExtra, isVisible = true, isFirstScreen = false) {
             const div = document.createElement('div');
             div.className = `card-tuch overflow-hidden aspect-square ${(!isVisible) ? 'hidden-item' : ''}`;
@@ -881,13 +870,9 @@
             if (isPreview) div.dataset.preview = 'true';
             if (isExtra) div.dataset.extra = 'true';
 
-            // Оптимизация загрузки картинок: loading="lazy" для элементов не на 1 экране
             const loadingStrategy = isFirstScreen ? 'eager' : 'lazy';
-
-            // Контент карточки
             let html = `<img src="${item.img}" class="w-full h-full object-cover" loading="${loadingStrategy}" width="280" height="280" alt="${item.category} - Работа Розалии">`;
 
-            // Если включен режим админа — накладываем панель управления поверх картинки
             if (isAdmin) {
                 html += `
                     <div class="absolute inset-0 bg-black/75 flex flex-col justify-between p-3 opacity-0 hover:opacity-100 transition-opacity duration-200">
@@ -904,7 +889,6 @@
             return div;
         }
 
-        // Рендер грида Магазина (Добавлено полноценное администрирование товаров!)
         function renderShopGrid() {
             const shopGrid = document.getElementById('shop-grid');
             shopGrid.innerHTML = '';
@@ -912,16 +896,13 @@
             shopItems.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = `card-tuch p-4 text-center flex flex-col justify-between relative overflow-hidden`;
-                
                 const tgText = `Здравствуйте! Хочу приобрести «${item.name}». Подскажите, пожалуйста, как оформить заказ?`;
                 
-                // HTML разметка товара
                 let html = `
                     <div class="relative group aspect-square overflow-hidden rounded-lg mb-4">
                         <img src="${item.img}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" width="300" height="300">
                 `;
 
-                // Оверлей админа на саму картинку товара для её Замены
                 if (isAdmin) {
                     html += `
                         <div class="absolute inset-0 bg-black/85 flex flex-col justify-center items-center p-3 opacity-0 hover:opacity-100 transition-opacity duration-150">
@@ -945,7 +926,6 @@
             });
         }
 
-        // Отрисовка кнопки Показать ещё
         function renderShowMoreButton(visible) {
             const wrapper = document.getElementById('show-all-wrapper');
             wrapper.innerHTML = '';
@@ -962,7 +942,6 @@
             }
         }
 
-        // Фильтрация
         function filterPortfolio(category) {
             currentFilter = category;
 
@@ -978,11 +957,10 @@
         
         const correctPasswordString = "tuch_studio_roza";
 
-        // Переключение режима админа
         function toggleAdminMode() {
             if (!isAdmin) {
                 const enteredPass = prompt('Введите секретный ключ администратора:');
-                if (enteredPass === null) return; // Нажата отмена
+                if (enteredPass === null) return;
 
                 if (enteredPass.trim() === correctPasswordString) {
                     isAdmin = true;
@@ -1001,7 +979,6 @@
             initSite();
         }
 
-        // Обновление UI элементов админки
         function updateAdminUI() {
             const uploadPanel = document.getElementById('admin-upload-panel');
             const shopPanel = document.getElementById('admin-shop-panel');
@@ -1025,7 +1002,6 @@
             }
         }
 
-        // Активация/деактивация редактирования элементов на странице
         function enableTextEditing(enable) {
             const elements = document.querySelectorAll('[data-edit-id]');
             elements.forEach(el => {
@@ -1041,7 +1017,6 @@
             });
         }
 
-        // Сохранение отредактированного текста страницы
         function saveEditedText(event) {
             const el = event.target;
             const id = el.dataset.editId;
@@ -1052,16 +1027,13 @@
             localStorage.setItem('tuch_texts', JSON.stringify(savedTexts));
         }
 
-        // Сохранение отредактированного названия или цены товара
         window.saveEditedShopText = function(event, index, field) {
             const el = event.target;
             const newText = el.innerText.trim();
-            
             shopItems[index][field] = newText;
             localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
         };
 
-        // Выбор способа загрузки в админке
         function toggleUploadMethod() {
             const method = document.getElementById('upload-method').value;
             const containerUrl = document.getElementById('method-url-container');
@@ -1076,7 +1048,6 @@
             }
         }
 
-        // Загрузка файла на ImgBB через API
         async function uploadFileToImgBB(file) {
             const apiKey = document.getElementById('imgbb-api-key').value.trim();
             if (!apiKey) {
@@ -1099,9 +1070,7 @@
                     method: 'POST',
                     body: formData
                 });
-                
                 const result = await response.json();
-                
                 if (result.success) {
                     return result.data.url;
                 } else {
@@ -1118,7 +1087,6 @@
             }
         }
 
-        // Добавление новой работы в портфолио
         async function addNewPortfolioItem() {
             const category = document.getElementById('admin-new-cat').value;
             const method = document.getElementById('upload-method').value;
@@ -1138,10 +1106,8 @@
                     alert('Пожалуйста, выберите файл на компьютере для отправки в облако!');
                     return;
                 }
-                
                 const file = fileInput.files[0];
                 const uploadedUrl = await uploadFileToImgBB(file);
-                
                 if (uploadedUrl) {
                     portfolioItems.unshift({ category, img: uploadedUrl });
                     saveAndReload('Файл загружен на ImgBB, а ссылка успешно сохранена в портфолио!');
@@ -1150,7 +1116,6 @@
             }
         }
 
-        // Добавление нового товара в магазин (Автозагрузка фото на ImgBB!)
         async function addNewShopItem() {
             const name = document.getElementById('shop-new-name').value.trim();
             const price = document.getElementById('shop-new-price').value.trim();
@@ -1160,7 +1125,6 @@
                 alert('Пожалуйста, заполните название и цену товара!');
                 return;
             }
-
             if (fileInput.files.length === 0) {
                 alert('Пожалуйста, выберите фотографию товара!');
                 return;
@@ -1173,17 +1137,13 @@
                 shopItems.push({ name, img: uploadedUrl, price });
                 localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
                 alert('Товар успешно добавлен в Магазин!');
-                
-                // Сброс полей
                 document.getElementById('shop-new-name').value = '';
                 document.getElementById('shop-new-price').value = '';
                 fileInput.value = '';
-                
                 initSite();
             }
         }
 
-        // Удаление элемента портфолио
         window.deletePortfolioItem = function(index) {
             if (confirm('Вы действительно хотите навсегда удалить эту работу из портфолио?')) {
                 portfolioItems.splice(index, 1);
@@ -1191,7 +1151,6 @@
             }
         };
 
-        // Удаление товара из магазина
         window.deleteShopItem = function(index) {
             if (confirm('Вы действительно хотите навсегда удалить этот товар из магазина?')) {
                 shopItems.splice(index, 1);
@@ -1201,7 +1160,6 @@
             }
         };
 
-        // Замена изображения в ПОРТФОЛИО
         let replaceTargetIndex = null;
         window.triggerReplaceImage = function(index) {
             const apiKey = document.getElementById('imgbb-api-key').value.trim();
@@ -1210,17 +1168,13 @@
                 return;
             }
             replaceTargetIndex = index;
-            const replaceInput = document.getElementById('replace-file-input');
-            replaceInput.click();
+            document.getElementById('replace-file-input').click();
         };
 
-        // Обработчик выбора файла для замены в портфолио
         document.getElementById('replace-file-input').addEventListener('change', async function(e) {
             if (replaceTargetIndex === null || e.target.files.length === 0) return;
-
             const file = e.target.files[0];
             const uploadedUrl = await uploadFileToImgBB(file);
-
             if (uploadedUrl) {
                 portfolioItems[replaceTargetIndex].img = uploadedUrl;
                 saveAndReload('Картинка успешно заменена на новую через облако ImgBB!');
@@ -1229,7 +1183,6 @@
             e.target.value = '';
         });
 
-        // Замена изображения в МАГАЗИНЕ
         let replaceShopTargetIndex = null;
         window.triggerReplaceShopImage = function(index) {
             const apiKey = document.getElementById('imgbb-api-key').value.trim();
@@ -1238,17 +1191,13 @@
                 return;
             }
             replaceShopTargetIndex = index;
-            const replaceShopInput = document.getElementById('replace-shop-file-input');
-            replaceShopInput.click();
+            document.getElementById('replace-shop-file-input').click();
         };
 
-        // Обработчик выбора файла для замены в магазине
         document.getElementById('replace-shop-file-input').addEventListener('change', async function(e) {
             if (replaceShopTargetIndex === null || e.target.files.length === 0) return;
-
             const file = e.target.files[0];
             const uploadedUrl = await uploadFileToImgBB(file);
-
             if (uploadedUrl) {
                 shopItems[replaceShopTargetIndex].img = uploadedUrl;
                 localStorage.setItem('tuch_shop', JSON.stringify(shopItems));
@@ -1259,14 +1208,33 @@
             e.target.value = '';
         });
 
-        // Вспомогательная функция для сохранения состояния
+        window.triggerReplaceAboutImage = function() {
+            const apiKey = document.getElementById('imgbb-api-key').value.trim();
+            if (!apiKey) {
+                alert('Пожалуйста, введите ваш API Ключ ImgBB в панели портфолио! Замена фотографии также отправляет её в облако.');
+                return;
+            }
+            document.getElementById('replace-about-file-input').click();
+        };
+
+        document.getElementById('replace-about-file-input').addEventListener('change', async function(e) {
+            if (e.target.files.length === 0) return;
+            const file = e.target.files[0];
+            const uploadedUrl = await uploadFileToImgBB(file);
+            if (uploadedUrl) {
+                document.getElementById('about-img').src = uploadedUrl;
+                localStorage.setItem('tuch_about_img', uploadedUrl);
+                alert('Главная фотография автора успешно изменена и сохранена в облаке ImgBB!');
+            }
+            e.target.value = '';
+        });
+
         function saveAndReload(message) {
             localStorage.setItem('tuch_portfolio', JSON.stringify(portfolioItems));
             alert(message);
             initSite();
         }
 
-        /* ===== Лайтбокс: открытие картинок портфолио ===== */
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxCounter = document.getElementById('lightbox-counter');
@@ -1286,7 +1254,6 @@
 
         function openLightbox(src) {
             if (isAdmin && event.target.tagName === 'BUTTON') return;
-
             lightboxList = getVisiblePortfolioImages();
             lightboxIndex = Math.max(0, lightboxList.indexOf(src));
             updateLightbox();
@@ -1342,7 +1309,6 @@
             else if (e.key === 'ArrowRight') lightboxStep(1);
         });
 
-        // Mobile menu toggle
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         let menuOpen = false;
