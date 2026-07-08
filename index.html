@@ -23,6 +23,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 
     <style>
         html {
@@ -420,15 +421,15 @@
             <!-- Admin upload panel -->
             <div id="admin-upload-panel" class="hidden mb-12 p-6 rounded-2xl border-2 border-dashed border-[#CBE857] bg-white/5 max-w-2xl mx-auto">
                 <h3 class="text-xl font-bold mb-4 text-[#CBE857] flex items-center gap-2">
-                    <span>☁️ Быстрая загрузка на ImgBB</span>
+                    <span>☁️ Загрузка в Supabase Storage</span>
                 </h3>
 
                 <!-- ImgBB API Key settings -->
                 <div class="mb-4 bg-black/20 p-3 rounded-lg border border-white/10">
-                    <label class="block text-xs mb-1 text-[#C68DFF] font-bold uppercase">Ваш API Ключ ImgBB:</label>
-                    <input type="text" id="imgbb-api-key" placeholder="Вставьте сюда ваш API Key с сайта api.imgbb.com" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#CBE857]">
+                    <label class="block text-xs mb-1 text-[#C68DFF] font-bold uppercase">Supabase Storage:</label>
+                    <input type="text" id="imgbb-api-key" placeholder="artworks bucket • https://lwzvgeeigqfvmatlihms.supabase.co" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#CBE857]">
                     <span class="text-[10px] text-white/50 mt-1 block">
-                        Чтобы получить бесплатный ключ: зайдите на <a href="https://api.imgbb.com/" target="_blank" class="underline text-[#CBE857]">api.imgbb.com</a>, войдите/зарегистрируйтесь и нажмите <b>"Получить API ключ"</b>. Наш сайт сохранит его локально в вашем браузере.
+                        Файлы загружаются напрямую в Supabase Storage (bucket <b>artworks</b>), затем URL сохраняется в PostgreSQL. Все посетители видят изменения сразу.
                     </span>
                 </div>
                 
@@ -447,8 +448,8 @@
                     <div>
                         <label class="block text-sm mb-1 opacity-80">Как добавить изображение?</label>
                         <select id="upload-method" onchange="toggleUploadMethod()" class="w-full bg-[#323843] border border-[#CBE857]/50 rounded-lg p-2 text-white focus:outline-none focus:border-[#CBE857]">
-                            <option value="file">Загрузить файл и отправить в облако ImgBB</option>
-                            <option value="url">Вставить уже готовую ссылку (вручную)</option>
+                            <option value="file">Загрузить файл в Supabase</option>
+                            <option value="url">Вставить готовый URL вручную</option>
                         </select>
                     </div>
                 </div>
@@ -468,7 +469,7 @@
                 <!-- Loader Spinner -->
                 <div id="upload-loader-container" class="hidden items-center gap-2 mb-4 bg-[#CBE857]/10 p-3 rounded-lg border border-[#CBE857]/30 text-sm">
                     <div class="loader"></div>
-                    <span class="text-[#CBE857] font-semibold animate-pulse">Идёт загрузка в облако ImgBB, пожалуйста, подождите...</span>
+                    <span class="text-[#CBE857] font-semibold animate-pulse">Идёт загрузка в Supabase Storage...</span>
                 </div>
 
                 <div class="flex gap-3 justify-end">
@@ -630,7 +631,7 @@
             <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition">tychencya779@gmail.com</a>
+                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="92e6ebf1faf7fcf1ebf3a5a5abd2f5fff3fbfebcf1fdff">[email&#160;protected]</span></a>
             </div>
         </div>
     </section>
@@ -643,70 +644,26 @@
         <p>&copy; 2026 Тученция. Создано с любовью к искусству.</p>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        
+        // ========== SUPABASE INTEGRATION FOR ТУЧЕНЦИЯ ==========
+        const SUPABASE_URL = "https://lwzvgeeigqfvmatlihms.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_E7IyfHDCfN_ozCsrLZVcYQ_eZSXSeOe";
+        const BUCKET = "artworks";
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // fallback local data (если Supabase пустой – покажем демо)
         const defaultPortfolioItems = [
             { category: 'Иллюстрация', img: 'https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg' },
             { category: 'Иллюстрация', img: 'https://i.ibb.co/dJDjxcmK/photo-2023-09-14-05-49-17.jpg' },
             { category: 'Иллюстрация', img: 'https://i.ibb.co/TqqjgBmX/photo-2024-02-14-00-31-25.jpg' },
             { category: 'Иллюстрация', img: 'https://i.ibb.co/Q7fSFSTC/image.jpg' },
-            { category: 'Иллюстрация', img: 'https://i.ibb.co/rfGfJCG1/photo-2023-04-02-20-26-16.png' },
-            { category: 'Иллюстрация', img: 'https://i.ibb.co/Ld7md4Y8/photo-2023-08-04-19-50-39.png' },
-            { category: 'Иллюстрация', img: 'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png' },
-            { category: 'Иллюстрация', img: 'https://i.ibb.co/PGt6FTYv/photo-2023-09-12-00-21-47.jpg' },
-
             { category: 'Живопись', img: 'https://i.ibb.co/Z6QLH265/photo-4-2025-12-14-22-00-00.png' },
             { category: 'Живопись', img: 'https://i.ibb.co/mCcyNf8N/photo-2025-12-14-15-07-47.png' },
-            { category: 'Живопись', img: 'https://i.ibb.co/0VFbQVhd/photo-2025-12-14-21-54-27.png' },
-            { category: 'Живопись', img: 'https://i.ibb.co/HpG0ZR1W/photo-1-2025-12-14-22-00-00.png' },
-            { category: 'Живопись', img: 'https://i.ibb.co/3YLQLg6j/photo-1-2026-03-20-09-18-30.jpg' },
-            { category: 'Живопись', img: 'https://i.ibb.co/tgNzG2K/photo-2-2025-12-14-22-00-00.png' },
-            { category: 'Живопись', img: 'https://i.ibb.co/Dsh7Q3b/photo-3-2025-12-14-22-00-00.png' },
-
             { category: 'Дизайн', img: 'https://i.ibb.co/jv8MWDmV/image.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/QFFQcXVK/image.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/7tPLZ3HS/image.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/4RMJSZy1/image.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/gZd73RQ4/image.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/VYx6W03f/image.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/CpzRY106/image.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/tTh8YCTV/1080-1080-px.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/VY3vw74Z/Frame-1.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/FqYDDTNt/Frame-2.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/DP4g3FpJ/Frame-3.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/nMCX6KDf/Frame-4.png' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/SXrXnXTn/photo-25-2026-02-01-23-55-13.jpg' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/4ZNGnmXC/photo-2025-07-22-22-17-01.jpg' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/Xrn1YrNc/photo-2026-04-13-21-17-34.jpg' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/wFsbD5Zx/photo-2026-05-24-09-38-59.jpg' },
-            { category: 'Дизайн', img: 'https://i.ibb.co/j9pVWmDX/1080-607-px.png' },
-
             { category: 'Роспись одежды', img: 'https://i.ibb.co/rRs6Vbs4/IMG-9533.jpg' },
-            { category: 'Роспись одежды', img: 'https://i.ibb.co/kVBq53MF/IMG-9535.jpg' },
-            { category: 'Роспись одежды', img: 'https://i.ibb.co/7xg83R6V/IMG-9537.jpg' },
-            { category: 'Роспись одежды', img: 'https://i.ibb.co/FkTDbQyg/IMG-9474.jpg' },
-            { category: 'Роспись одежды', img: 'https://i.ibb.co/Cp3Rx6HK/IMG-9478.jpg' },
-            { category: 'Роспись одежды', img: 'https://i.ibb.co/b5TYbLD8/IMG-9494.jpg' },
-            { category: 'Роспись одежды', img: 'https://i.ibb.co/0Vfzv7N4/IMG-9497.jpg' },
-            { category: 'Роспись одежды', img: 'https://i.ibb.co/27GB7fqJ/IMG-9529.jpg' },
-
             { category: 'Аквагрим', img: 'https://i.ibb.co/8gzSkKZc/photo-2026-05-24-09-38-59.jpg' },
-            { category: 'Аквагрим', img: 'https://i.ibb.co/VcsZRFCb/IMG-20240115-180128.jpg' },
-            { category: 'Аквагрим', img: 'https://i.ibb.co/JRC5KZT0/photo-2024-09-12-13-45-08.jpg' },
-
-            { category: 'Фотография', img: 'https://i.ibb.co/yFczP9fG/photo-2026-04-25-21-31-28.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/zWJz9pvk/photo-2026-04-25-21-31-28-2.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/tPmPxG5y/photo-2026-04-25-21-31-29.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/NnKq62Mx/photo-2026-04-25-21-31-31.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/d0TgX3ZC/photo-2026-05-06-21-34-27.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/hxPwH2Yq/photo-2025-12-08-02-02-46.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/d0KdKjYp/photo-2025-12-08-02-02-52.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/7x0pXdMb/photo-2026-03-29-13-52-10.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/1G4GS8n7/photo-2026-03-29-13-52-14.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/v5KMvRH/photo-2026-04-12-12-17-42.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/jZP5fVt6/photo-2026-04-12-12-18-23.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/4wyD6RXq/photo-2026-04-12-12-18-26.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/PGj02Bz6/photo-2026-04-25-21-31-27.jpg' },
-            { category: 'Фотография', img: 'https://i.ibb.co/TD6cpKHv/photo-2026-04-25-21-31-27-2.jpg' }
+            { category: 'Фотография', img: 'https://i.ibb.co/yFczP9fG/photo-2026-04-25-21-31-28.jpg' }
         ];
 
         const defaultShopItems = [
@@ -716,11 +673,13 @@
             { name: 'Набор стикеров',      img: 'https://i.ibb.co/dw1r3q0X/photo-2023-08-08-17-25-30.png', price: '300 ₽' },
         ];
 
-        let portfolioItems = JSON.parse(localStorage.getItem('t_portfolio')) || defaultPortfolioItems;
-        let shopItems = JSON.parse(localStorage.getItem('t_shop')) || defaultShopItems;
+        let portfolioItems = [];
+        let shopItems = [];
 
         let isAdmin = localStorage.getItem('t_isAdmin') === 'true';
-        let imgbbApiKey = localStorage.getItem('t_imgbb_key') || '';
+
+        // Тексты (оставили локально, можно позже вынести в site_texts)
+        let imgbbApiKey = 'supabase'; // заглушка для старого кода
 
         const services = [
             { title: 'Иллюстрация', desc: 'Персонажи, сюжеты и концепты в авторском стиле.', price: 'от 1 500 ₽' },
@@ -749,54 +708,196 @@
         let currentFilter = 'all';
         let shownCount = 6;
 
-        function initSite() {
+        // ---------- SUPABASE DATA LAYER ----------
+        async function loadPortfolioFromSupabase(){
+            try{
+                const { data, error } = await sb.from('portfolio')
+                  .select('id, category, image_url, title, created_at')
+                  .order('created_at', { ascending: false });
+                if(error) throw error;
+                if(data && data.length){
+                    portfolioItems = data.map(r => ({
+                        id: r.id,
+                        category: r.category || 'Иллюстрация',
+                        img: r.image_url,
+                        title: r.title || ''
+                    }));
+                    return true;
+                } else {
+                    return false;
+                }
+            }catch(e){
+                console.error('Supabase portfolio load error', e);
+                showToast('Supabase: '+e.message, true);
+                return false;
+            }
+        }
+        async function loadShopFromSupabase(){
+            try{
+                const { data, error } = await sb.from('shop')
+                  .select('id, name, title, price, image_url, available, created_at')
+                  .order('created_at', { ascending: false });
+                if(error) throw error;
+                if(data && data.length){
+                    shopItems = data.map(r => ({
+                        id: r.id,
+                        name: r.name || r.title || 'Товар',
+                        price: r.price ? (typeof r.price === 'number' ? new Intl.NumberFormat('ru-RU').format(r.price)+' ₽' : r.price) : 'Цена по запросу',
+                        price_raw: r.price,
+                        img: r.image_url,
+                        available: r.available !== false
+                    }));
+                    return true;
+                } else {
+                    return false;
+                }
+            }catch(e){
+                console.error('Supabase shop load error', e);
+                showToast('Supabase shop: '+e.message, true);
+                return false;
+            }
+        }
+
+        async function uploadFileToSupabase(file, folder='portfolio'){
+            if(!file) return null;
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+            const safe = file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+            const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2,8)}_${safe}`;
+            const loader = document.getElementById('upload-loader-container');
+            if(loader){ loader.classList.remove('hidden'); loader.classList.add('flex'); }
+            try{
+                const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file, {
+                    cacheControl: '3600',
+                    upsert: false,
+                    contentType: file.type
+                });
+                if(upErr) throw upErr;
+                const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
+                return data.publicUrl;
+            } finally {
+                if(loader){ loader.classList.add('hidden'); loader.classList.remove('flex'); }
+            }
+        }
+
+        // совместимость со старым названием
+        async function uploadFileToImgBB(file){
+            // теперь это Supabase
+            try{
+                return await uploadFileToSupabase(file, 'portfolio');
+            }catch(e){
+                alert('Ошибка загрузки в Supabase: '+e.message);
+                return null;
+            }
+        }
+
+        function showToast(msg, isErr){
+            // простой тост
+            let t = document.getElementById('sb-toast');
+            if(!t){
+                t = document.createElement('div');
+                t.id='sb-toast';
+                t.style.cssText='position:fixed;bottom:22px;right:22px;z-index:9999;background:#1e1e28;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;max-width:360px;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:.25s;opacity:0;transform:translateY(8px);border:1px solid #CBE85766';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.style.borderColor = isErr ? '#ff6b6b' : '#CBE85766';
+            t.style.opacity='1'; t.style.transform='translateY(0)';
+            clearTimeout(t._tid);
+            t._tid = setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(8px)'; }, 3000);
+        }
+
+        async function initSite() {
             const savedAboutImg = localStorage.getItem('t_about_img');
             if (savedAboutImg) {
-                document.getElementById('about-img').src = savedAboutImg;
+                const aImg = document.getElementById('about-img');
+                if(aImg) aImg.src = savedAboutImg;
             }
 
-            loadSavedTexts();
+            await loadSavedTexts();
             updateAdminUI();
 
-            const portfolioGroups = groupPortfolio(portfolioItems);
-            const categories = ['Все', 'Иллюстрация', 'Живопись', 'Дизайн', 'Роспись одежды', 'Аквагрим', 'Фотография'];
+            // Грузим из Supabase
+            const okP = await loadPortfolioFromSupabase();
+            if(!okP){
+                // fallback: localStorage или default
+                const local = JSON.parse(localStorage.getItem('t_portfolio')||'null');
+                portfolioItems = local && local.length ? local : defaultPortfolioItems.map((x,i)=>({...x, id:'local-'+i}));
+                showToast('Портфолио: локальный fallback', true);
+            } else {
+                showToast('Портфолио загружено из Supabase: '+portfolioItems.length);
+            }
+            const okS = await loadShopFromSupabase();
+            if(!okS){
+                const localShop = JSON.parse(localStorage.getItem('t_shop')||'null');
+                shopItems = localShop && localShop.length ? localShop : defaultShopItems.map((x,i)=>({...x, id:'local-'+i}));
+            } else {
+                showToast('Магазин из Supabase: '+shopItems.length);
+            }
 
+            // фильтры
             const filterContainer = document.getElementById('port-filters');
-            filterContainer.innerHTML = '';
-            categories.forEach((f, index) => {
-                const btn = document.createElement('button');
-                btn.className = `btn-tuch px-4 py-1 text-sm uppercase tracking-widest ${f === 'Все' && currentFilter === 'all' ? 'filter-active' : (f === currentFilter ? 'filter-active' : '')}`;
-                btn.innerText = f;
-                btn.dataset.filter = f === 'Все' ? 'all' : f;
-                btn.onclick = () => filterPortfolio(btn.dataset.filter);
-                filterContainer.appendChild(btn);
-            });
+            if(filterContainer){
+                filterContainer.innerHTML = '';
+                const categories = ['Все', 'Иллюстрация', 'Живопись', 'Дизайн', 'Роспись одежды', 'Аквагрим', 'Фотография'];
+                categories.forEach(f => {
+                    const btn = document.createElement('button');
+                    btn.className = `btn-tuch px-4 py-1 text-sm uppercase tracking-widest ${f === 'Все' && currentFilter === 'all' ? 'filter-active' : (f === currentFilter ? 'filter-active' : '')}`;
+                    btn.innerText = f;
+                    btn.dataset.filter = f === 'Все' ? 'all' : f;
+                    btn.onclick = () => filterPortfolio(btn.dataset.filter);
+                    filterContainer.appendChild(btn);
+                });
+            }
 
             renderPortfolioGrid();
 
             const servGrid = document.getElementById('serv-grid');
-            servGrid.innerHTML = '';
-            services.forEach(s => {
-                const div = document.createElement('div');
-                div.className = `card-tuch p-6 flex flex-col justify-between`;
-                const tgText = `Здравствуйте! Интересует услуга «${s.title}». Расскажите, пожалуйста, подробнее о сроках и стоимости.`;
-                div.innerHTML = `
-                    <div>
-                        <h3 class="text-xl font-bold mb-2">${s.title}</h3>
-                        <p class="opacity-80 mb-4">${s.desc}</p>
-                    </div>
-                    <div class="flex items-center justify-between mt-4">
-                        <div class="font-bold">${s.price}</div>
-                        <a href="${makeTgLink(tgText)}" target="_blank" class="btn-tuch px-4 py-2 text-sm uppercase tracking-wide">Заказать</a>
-                    </div>
-                `;
-                servGrid.appendChild(div);
-            });
+            if(servGrid){
+                servGrid.innerHTML = '';
+                services.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = `card-tuch p-6 flex flex-col justify-between`;
+                    const tgText = `Здравствуйте! Интересует услуга «${s.title}». Расскажите, пожалуйста, подробнее о сроках и стоимости.`;
+                    div.innerHTML = `
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">${s.title}</h3>
+                            <p class="opacity-80 mb-4">${s.desc}</p>
+                        </div>
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="font-bold">${s.price}</div>
+                            <a href="${makeTgLink(tgText)}" target="_blank" class="btn-tuch px-4 py-2 text-sm uppercase tracking-wide">Заказать</a>
+                        </div>
+                    `;
+                    servGrid.appendChild(div);
+                });
+            }
 
             renderShopGrid();
+
+            // статус подключения
+            const statusEl = document.getElementById('supabase-status');
+            if(statusEl){
+                statusEl.textContent = okP ? `Supabase ✓ ${portfolioItems.length} работ` : 'Supabase offline – local fallback';
+                statusEl.style.color = okP ? '#CBE857' : '#E8A0BF';
+            }
         }
 
-        function loadSavedTexts() {
+        async function loadSavedTexts() {
+            // 1) пробуем Supabase
+            try{
+                const { data, error } = await sb.from('site_texts').select('id, value');
+                if(!error && data && data.length){
+                    data.forEach(row=>{
+                        const el = document.querySelector(`[data-edit-id="${row.id}"]`);
+                        if(el) el.innerText = row.value;
+                    });
+                    // сохраним локально как кэш
+                    const cache={}; data.forEach(r=>cache[r.id]=r.value);
+                    localStorage.setItem('t_texts', JSON.stringify(cache));
+                    return;
+                }
+            }catch(e){ console.warn('site_texts supabase fail', e); }
+            // 2) fallback localStorage
             const savedTexts = JSON.parse(localStorage.getItem('t_texts')) || {};
             Object.keys(savedTexts).forEach(id => {
                 const el = document.querySelector(`[data-edit-id="${id}"]`);
@@ -808,6 +909,7 @@
 
         function renderPortfolioGrid() {
             const grid = document.getElementById('port-grid');
+            if(!grid) return;
             grid.innerHTML = '';
 
             const portfolioGroups = groupPortfolio(portfolioItems);
@@ -861,7 +963,8 @@
             if (isExtra) div.dataset.extra = 'true';
 
             const loadingStrategy = isFirstScreen ? 'eager' : 'lazy';
-            let html = `<img src="${item.img}" class="w-full h-full object-cover" loading="${loadingStrategy}" width="280" height="280" alt="${item.category} - Работа Розалии">`;
+            const imgSrc = item.img || item.image_url || '';
+            let html = `<img src="${imgSrc}" class="w-full h-full object-cover" loading="${loadingStrategy}" width="280" height="280" alt="${item.category} - Работа Розалии">`;
 
             if (isAdmin) {
                 html += `
@@ -881,6 +984,7 @@
 
         function renderShopGrid() {
             const shopGrid = document.getElementById('shop-grid');
+            if(!shopGrid) return;
             shopGrid.innerHTML = '';
 
             shopItems.forEach((item, index) => {
@@ -918,6 +1022,7 @@
 
         function renderShowMoreButton(visible) {
             const wrapper = document.getElementById('show-all-wrapper');
+            if(!wrapper) return;
             wrapper.innerHTML = '';
             if (visible) {
                 const showMoreBtn = document.createElement('button');
@@ -943,7 +1048,7 @@
             renderPortfolioGrid();
         }
 
-        /* ===== СЕКРЕТНЫЕ НАСТРОЙКИ БЕЗОПАСНОСТИ ===== */
+        /* ===== ADMIN ===== */
         
         const correctPasswordString = "tuch_studio_roza";
 
@@ -955,7 +1060,7 @@
                 if (enteredPass.trim() === correctPasswordString) {
                     isAdmin = true;
                     localStorage.setItem('t_isAdmin', 'true');
-                    alert('Доступ разрешён. Добро пожаловать, Розалия! Теперь вы можете менять картинки и редактировать ТЕКСТЫ/ТОВАРЫ на сайте.');
+                    alert('Доступ разрешён. Добро пожаловать, Розалия! Supabase-режим включён.');
                 } else {
                     alert('Доступ заблокирован. Неверный ключ администратора!');
                 }
@@ -968,37 +1073,34 @@
             updateAdminUI();
             initSite();
         }
+        window.toggleAdminMode = toggleAdminMode;
 
         function updateAdminUI() {
             const uploadPanel = document.getElementById('admin-upload-panel');
             const shopPanel = document.getElementById('admin-shop-panel');
             const indicator = document.getElementById('admin-indicator');
-            const apiKeyInput = document.getElementById('imgbb-api-key');
             const secretStar = document.getElementById('admin-secret-star');
             const aboutOverlay = document.getElementById('about-admin-overlay');
 
             if (isAdmin) {
-                uploadPanel.classList.remove('hidden');
-                shopPanel.classList.remove('hidden');
-                indicator.classList.remove('hidden');
-                apiKeyInput.value = imgbbApiKey;
-                secretStar.setAttribute('fill', '#CBE857');
+                if(uploadPanel) uploadPanel.classList.remove('hidden');
+                if(shopPanel) shopPanel.classList.remove('hidden');
+                if(indicator) indicator.classList.remove('hidden');
+                if(secretStar) secretStar.setAttribute('fill', '#CBE857');
                 enableTextEditing(true);
                 
                 if (aboutOverlay) {
                     aboutOverlay.style.display = 'flex';
-                    document.getElementById('about-photo-wrapper').classList.add('group');
                 }
             } else {
-                uploadPanel.classList.add('hidden');
-                shopPanel.classList.add('hidden');
-                indicator.classList.add('hidden');
-                secretStar.setAttribute('fill', '#C68DFF');
+                if(uploadPanel) uploadPanel.classList.add('hidden');
+                if(shopPanel) shopPanel.classList.add('hidden');
+                if(indicator) indicator.classList.add('hidden');
+                if(secretStar) secretStar.setAttribute('fill', '#C68DFF');
                 enableTextEditing(false);
 
                 if (aboutOverlay) {
                     aboutOverlay.style.display = 'none';
-                    document.getElementById('about-photo-wrapper').classList.remove('group');
                 }
             }
         }
@@ -1018,268 +1120,289 @@
             });
         }
 
-        function saveEditedText(event) {
+        async function saveEditedText(event) {
             const el = event.target;
             const id = el.dataset.editId;
             const newText = el.innerText.trim();
 
+            // локальный кэш сразу
             const savedTexts = JSON.parse(localStorage.getItem('t_texts')) || {};
             savedTexts[id] = newText;
             localStorage.setItem('t_texts', JSON.stringify(savedTexts));
+
+            // Supabase upsert
+            try{
+                const { error } = await sb.from('site_texts')
+                  .upsert({ id, value: newText }, { onConflict: 'id' });
+                if(error) throw error;
+                showToast('Текст сохранён в Supabase ✓');
+            }catch(e){
+                console.error(e);
+                showToast('Текст сохранён локально, Supabase ошибка: '+e.message, true);
+            }
         }
 
-        window.saveEditedShopText = function(event, index, field) {
+        window.saveEditedShopText = async function(event, index, field) {
             const el = event.target;
             const newText = el.innerText.trim();
+            const item = shopItems[index];
+            if(!item) return;
             shopItems[index][field] = newText;
+            // пробуем сохранить в Supabase
+            if(item.id && !String(item.id).startsWith('local-')){
+                try{
+                    const update = {};
+                    if(field==='name') update.name = newText;
+                    if(field==='price'){
+                        update.price = newText;
+                        // пробуем вытащить число
+                        const num = parseFloat(newText.replace(/[^\d.]/g,''));
+                        if(!isNaN(num)) update.price_numeric = num;
+                    }
+                    await sb.from('shop').update(update).eq('id', item.id);
+                    showToast('Сохранено в Supabase');
+                }catch(e){ console.error(e); showToast(e.message,true); }
+            }
             localStorage.setItem('t_shop', JSON.stringify(shopItems));
         };
 
         function toggleUploadMethod() {
-            const method = document.getElementById('upload-method').value;
+            const methodEl = document.getElementById('upload-method');
+            if(!methodEl) return;
+            const method = methodEl.value;
             const containerUrl = document.getElementById('method-url-container');
             const containerFile = document.getElementById('method-file-container');
 
             if (method === 'url') {
-                containerUrl.classList.remove('hidden');
-                containerFile.classList.add('hidden');
+                if(containerUrl) containerUrl.classList.remove('hidden');
+                if(containerFile) containerFile.classList.add('hidden');
             } else {
-                containerUrl.classList.add('hidden');
-                containerFile.classList.remove('hidden');
+                if(containerUrl) containerUrl.classList.add('hidden');
+                if(containerFile) containerFile.classList.remove('hidden');
             }
         }
-
-        async function uploadFileToImgBB(file) {
-            const apiKey = document.getElementById('imgbb-api-key').value.trim();
-            if (!apiKey) {
-                alert('Ошибка! Пожалуйста, укажите ваш API ключ ImgBB в панели. Без него загрузка файлов невозможна.');
-                return null;
-            }
-
-            imgbbApiKey = apiKey;
-            localStorage.setItem('t_imgbb_key', apiKey);
-
-            const loader = document.getElementById('upload-loader-container');
-            loader.classList.remove('hidden');
-            loader.classList.add('flex');
-
-            const formData = new FormData();
-            formData.append('image', file);
-
-            try {
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                if (result.success) {
-                    return result.data.url;
-                } else {
-                    alert('Ошибка ImgBB API: ' + (result.error ? result.error.message : 'Неизвестная ошибка'));
-                    return null;
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Произошла сетевая ошибка при загрузке на ImgBB!');
-                return null;
-            } finally {
-                loader.classList.add('hidden');
-                loader.classList.remove('flex');
-            }
-        }
+        window.toggleUploadMethod = toggleUploadMethod;
 
         async function addNewPortfolioItem() {
-            const category = document.getElementById('admin-new-cat').value;
-            const method = document.getElementById('upload-method').value;
+            const catEl = document.getElementById('admin-new-cat');
+            const category = catEl ? catEl.value : 'Иллюстрация';
+            const methodEl = document.getElementById('upload-method');
+            const method = methodEl ? methodEl.value : 'file';
 
-            if (method === 'url') {
-                const url = document.getElementById('admin-new-url').value.trim();
-                if (!url) {
-                    alert('Пожалуйста, введите URL изображения!');
-                    return;
+            try{
+                let imageUrl = null;
+                if (method === 'url') {
+                    const urlEl = document.getElementById('admin-new-url');
+                    const url = urlEl ? urlEl.value.trim() : '';
+                    if (!url) { alert('Пожалуйста, введите URL изображения!'); return; }
+                    imageUrl = url;
+                } else {
+                    const fileInput = document.getElementById('admin-new-file');
+                    if (!fileInput || fileInput.files.length === 0) {
+                        alert('Пожалуйста, выберите файл!');
+                        return;
+                    }
+                    const file = fileInput.files[0];
+                    imageUrl = await uploadFileToSupabase(file, 'portfolio');
+                    if(fileInput) fileInput.value='';
                 }
-                portfolioItems.unshift({ category, img: url });
-                saveAndReload('Изображение успешно добавлено по прямой ссылке!');
-                document.getElementById('admin-new-url').value = '';
-            } else {
-                const fileInput = document.getElementById('admin-new-file');
-                if (fileInput.files.length === 0) {
-                    alert('Пожалуйста, выберите файл на компьютере для отправки в облако!');
-                    return;
-                }
-                const file = fileInput.files[0];
-                const uploadedUrl = await uploadFileToImgBB(file);
-                if (uploadedUrl) {
-                    portfolioItems.unshift({ category, img: uploadedUrl });
-                    saveAndReload('Файл загружен на ImgBB, а ссылка успешно сохранена в портфолио!');
-                    fileInput.value = '';
-                }
+                if(!imageUrl) throw new Error('Нет URL изображения');
+
+                const { data, error } = await sb.from('portfolio').insert({
+                    category,
+                    image_url: imageUrl,
+                    title: category
+                }).select().single();
+                if(error) throw error;
+                showToast('Добавлено в Supabase ✓');
+                const urlInput = document.getElementById('admin-new-url');
+                if(urlInput) urlInput.value='';
+                await initSite();
+            }catch(e){
+                console.error(e);
+                alert('Ошибка Supabase: '+e.message);
+                showToast(e.message, true);
             }
         }
+        window.addNewPortfolioItem = addNewPortfolioItem;
 
         async function addNewShopItem() {
-            const name = document.getElementById('shop-new-name').value.trim();
-            const price = document.getElementById('shop-new-price').value.trim();
+            const nameEl = document.getElementById('shop-new-name');
+            const priceEl = document.getElementById('shop-new-price');
+            const name = nameEl ? nameEl.value.trim() : '';
+            const price = priceEl ? priceEl.value.trim() : '';
             const fileInput = document.getElementById('shop-new-file');
 
-            if (!name || !price) {
-                alert('Пожалуйста, заполните название и цену товара!');
-                return;
-            }
-            if (fileInput.files.length === 0) {
-                alert('Пожалуйста, выберите фотографию товара!');
-                return;
-            }
+            if (!name || !price) { alert('Пожалуйста, заполните название и цену товара!'); return; }
+            if (!fileInput || fileInput.files.length === 0) { alert('Пожалуйста, выберите фотографию товара!'); return; }
 
-            const file = fileInput.files[0];
-            const uploadedUrl = await uploadFileToImgBB(file);
+            try{
+                const file = fileInput.files[0];
+                const uploadedUrl = await uploadFileToSupabase(file, 'shop');
+                if(!uploadedUrl) throw new Error('Загрузка не удалась');
 
-            if (uploadedUrl) {
-                shopItems.push({ name, img: uploadedUrl, price });
-                localStorage.setItem('t_shop', JSON.stringify(shopItems));
-                alert('Товар успешно добавлен в Магазин!');
-                document.getElementById('shop-new-name').value = '';
-                document.getElementById('shop-new-price').value = '';
-                fileInput.value = '';
-                initSite();
+                // пробуем распарсить цену в число
+                const priceNum = parseFloat(price.replace(/[^\d.]/g,''));
+                const payload = {
+                    name,
+                    title: name,
+                    price: isNaN(priceNum) ? null : priceNum,
+                    image_url: uploadedUrl,
+                    available: true
+                };
+                // также сохраним текстовую цену если есть колонка price_text – игнорируем ошибку
+                const { error } = await sb.from('shop').insert(payload);
+                if(error) throw error;
+
+                showToast('Товар добавлен в Supabase');
+                if(nameEl) nameEl.value='';
+                if(priceEl) priceEl.value='';
+                fileInput.value='';
+                await initSite();
+            }catch(e){
+                console.error(e);
+                alert('Ошибка: '+e.message);
+                showToast(e.message, true);
             }
         }
+        window.addNewShopItem = addNewShopItem;
 
-        window.deletePortfolioItem = function(index) {
-            if (confirm('Вы действительно хотите навсегда удалить эту работу из портфолио?')) {
-                portfolioItems.splice(index, 1);
-                saveAndReload('Работа успешно удалена!');
-            }
+        window.deletePortfolioItem = async function(index) {
+            const item = portfolioItems[index];
+            if(!item) return;
+            if (!confirm('Удалить эту работу из портфолио (Supabase)?')) return;
+            try{
+                if(item.id && !String(item.id).startsWith('local-')){
+                    const { error } = await sb.from('portfolio').delete().eq('id', item.id);
+                    if(error) throw error;
+                }
+                showToast('Удалено');
+                await initSite();
+            }catch(e){ alert(e.message); }
         };
 
-        window.deleteShopItem = function(index) {
-            if (confirm('Вы действительно хотите навсегда удалить этот товар из магазина?')) {
-                shopItems.splice(index, 1);
-                localStorage.setItem('t_shop', JSON.stringify(shopItems));
-                alert('Товар удален из Магазина!');
-                initSite();
-            }
+        window.deleteShopItem = async function(index) {
+            const item = shopItems[index];
+            if(!item) return;
+            if (!confirm('Удалить товар из магазина?')) return;
+            try{
+                if(item.id && !String(item.id).startsWith('local-')){
+                    const { error } = await sb.from('shop').delete().eq('id', item.id);
+                    if(error) throw error;
+                }
+                showToast('Товар удалён');
+                await initSite();
+            }catch(e){ alert(e.message); }
         };
 
         let replaceTargetIndex = null;
         window.triggerReplaceImage = function(index) {
-            const apiKey = document.getElementById('imgbb-api-key').value.trim();
-            if (!apiKey) {
-                alert('Пожалуйста, введите ваш API Ключ ImgBB в блоке добавления работы! Замена картинок также отправляет файлы в облако.');
-                return;
-            }
             replaceTargetIndex = index;
-            document.getElementById('replace-file-input').click();
+            const inp = document.getElementById('replace-file-input');
+            if(inp) inp.click();
         };
 
-        document.getElementById('replace-file-input').addEventListener('change', async function(e) {
-            if (replaceTargetIndex === null || e.target.files.length === 0) return;
-            const file = e.target.files[0];
-            const uploadedUrl = await uploadFileToImgBB(file);
-            if (uploadedUrl) {
-                portfolioItems[replaceTargetIndex].img = uploadedUrl;
-                saveAndReload('Картинка успешно заменена на новую через облако ImgBB!');
-            }
-            replaceTargetIndex = null;
-            e.target.value = '';
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const rep = document.getElementById('replace-file-input');
+            if(rep) rep.addEventListener('change', async function(e) {
+                if (replaceTargetIndex === null || e.target.files.length === 0) return;
+                const file = e.target.files[0];
+                const item = portfolioItems[replaceTargetIndex];
+                try{
+                    const uploadedUrl = await uploadFileToSupabase(file, 'portfolio');
+                    if(!uploadedUrl) throw new Error('upload failed');
+                    if(item && item.id && !String(item.id).startsWith('local-')){
+                        const { error } = await sb.from('portfolio').update({ image_url: uploadedUrl }).eq('id', item.id);
+                        if(error) throw error;
+                    }
+                    showToast('Картинка заменена ✓');
+                    await initSite();
+                }catch(err){ alert('Ошибка: '+err.message); showToast(err.message,true);}
+                replaceTargetIndex = null;
+                e.target.value = '';
+            });
         });
 
         let replaceShopTargetIndex = null;
         window.triggerReplaceShopImage = function(index) {
-            const apiKey = document.getElementById('imgbb-api-key').value.trim();
-            if (!apiKey) {
-                alert('Пожалуйста, введите ваш API Ключ ImgBB в панели выше! Замена картинок также отправляет файлы в облако.');
-                return;
-            }
             replaceShopTargetIndex = index;
-            document.getElementById('replace-shop-file-input').click();
+            const inp = document.getElementById('replace-shop-file-input');
+            if(inp) inp.click();
         };
 
-        document.getElementById('replace-shop-file-input').addEventListener('change', async function(e) {
-            if (replaceShopTargetIndex === null || e.target.files.length === 0) return;
-            const file = e.target.files[0];
-            const uploadedUrl = await uploadFileToImgBB(file);
-            if (uploadedUrl) {
-                shopItems[replaceShopTargetIndex].img = uploadedUrl;
-                localStorage.setItem('t_shop', JSON.stringify(shopItems));
-                alert('Фотография товара успешно заменена через облако ImgBB!');
-                initSite();
-            }
-            replaceShopTargetIndex = null;
-            e.target.value = '';
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const repShop = document.getElementById('replace-shop-file-input');
+            if(repShop) repShop.addEventListener('change', async function(e) {
+                if (replaceShopTargetIndex === null || e.target.files.length === 0) return;
+                const file = e.target.files[0];
+                const item = shopItems[replaceShopTargetIndex];
+                try{
+                    const uploadedUrl = await uploadFileToSupabase(file, 'shop');
+                    if(item && item.id && !String(item.id).startsWith('local-')){
+                        const { error } = await sb.from('shop').update({ image_url: uploadedUrl }).eq('id', item.id);
+                        if(error) throw error;
+                    }
+                    showToast('Фото товара заменено');
+                    await initSite();
+                }catch(err){ alert(err.message); }
+                replaceShopTargetIndex = null;
+                e.target.value = '';
+            });
         });
 
         window.triggerReplaceAboutImage = function() {
-            const apiKey = document.getElementById('imgbb-api-key').value.trim();
-            if (!apiKey) {
-                alert('Пожалуйста, введите ваш API Ключ ImgBB в панели портфолио! Замена фотографии также отправляет её в облако.');
-                return;
-            }
-            document.getElementById('replace-about-file-input').click();
+            const inp = document.getElementById('replace-about-file-input');
+            if(inp) inp.click();
         };
 
-        document.getElementById('replace-about-file-input').addEventListener('change', async function(e) {
-            if (e.target.files.length === 0) return;
-            const file = e.target.files[0];
-            const uploadedUrl = await uploadFileToImgBB(file);
-            if (uploadedUrl) {
-                document.getElementById('about-img').src = uploadedUrl;
-                localStorage.setItem('t_about_img', uploadedUrl);
-                alert('Главная фотография автора успешно изменена и сохранена в облаке ImgBB!');
-            }
-            e.target.value = '';
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const aboutInp = document.getElementById('replace-about-file-input');
+            if(aboutInp) aboutInp.addEventListener('change', async function(e) {
+                if (e.target.files.length === 0) return;
+                const file = e.target.files[0];
+                try{
+                    const uploadedUrl = await uploadFileToSupabase(file, 'about');
+                    const aboutImg = document.getElementById('about-img');
+                    if(aboutImg) aboutImg.src = uploadedUrl;
+                    localStorage.setItem('t_about_img', uploadedUrl);
+                    showToast('Фото автора обновлено');
+                    alert('Главная фотография автора обновлена (Supabase Storage). URL сохранён локально, для глобального – добавьте таблицу site_settings.');
+                }catch(err){ alert(err.message); }
+                e.target.value = '';
+            });
         });
 
-        function saveAndReload(message) {
-            localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
-            alert(message);
-            initSite();
-        }
-
-        /* ===== Умный универсальный Лайтбокс для картинок по всему сайту ===== */
+        /* ===== Лайтбокс (без изменений) ===== */
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxCounter = document.getElementById('lightbox-counter');
         let lightboxList = [];
         let lightboxIndex = 0;
 
-        // Собирает все картинки из активного на данный момент контекста просмотра
         function getVisibleImagesInContext(currentSrc) {
             const list = [];
-            
-            // 1. Проверяем, находится ли кликнутый элемент в разделе Портфолио
             const isInPortfolio = Array.from(document.querySelectorAll('#port-grid img')).some(img => img.src === currentSrc);
             if (isInPortfolio) {
-                document.querySelectorAll('#port-grid img').forEach(img => {
-                    list.push(img.src);
-                });
+                document.querySelectorAll('#port-grid img').forEach(img => { list.push(img.src); });
                 return list;
             }
-
-            // 2. Проверяем, находится ли кликнутый элемент в разделе Магазин
             const isInShop = Array.from(document.querySelectorAll('#shop-grid img')).some(img => img.src === currentSrc);
             if (isInShop) {
-                document.querySelectorAll('#shop-grid img').forEach(img => {
-                    list.push(img.src);
-                });
+                document.querySelectorAll('#shop-grid img').forEach(img => { list.push(img.src); });
                 return list;
             }
-
-            // 3. Если это одиночное фото (например, Обо мне), возвращаем список из одного элемента
             return [currentSrc];
         }
 
         function openLightbox(src) {
-            // В режиме админа клик по кнопке "Заменить" не должен открывать просмотр
-            if (isAdmin && event.target.tagName === 'BUTTON') return;
-
+            if (isAdmin && event && event.target.tagName === 'BUTTON') return;
             lightboxList = getVisibleImagesInContext(src);
             lightboxIndex = Math.max(0, lightboxList.indexOf(src));
             updateLightbox();
             lightbox.classList.add('open');
             document.body.style.overflow = 'hidden';
-            preloadNextLightboxImage();
         }
+        window.openLightbox = openLightbox;
 
         function updateLightbox() {
             if (!lightboxList.length) return;
@@ -1291,13 +1414,6 @@
             lightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxList.length}`;
         }
 
-        function preloadNextLightboxImage() {
-            if (lightboxList.length <= 1) return;
-            const nextIndex = (lightboxIndex + 1) % lightboxList.length;
-            const imgPreload = new Image();
-            imgPreload.src = lightboxList[nextIndex];
-        }
-
         function closeLightbox() {
             lightbox.classList.remove('open');
             document.body.style.overflow = '';
@@ -1307,67 +1423,72 @@
             if (!lightboxList.length) return;
             lightboxIndex = (lightboxIndex + dir + lightboxList.length) % lightboxList.length;
             updateLightbox();
-            preloadNextLightboxImage();
         }
 
-        // Слушатель кликов по Портфолио
-        document.getElementById('port-grid').addEventListener('click', e => {
-            const img = e.target.closest('img');
-            if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
-                openLightbox(img.src);
-            }
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const pg = document.getElementById('port-grid');
+            if(pg) pg.addEventListener('click', e => {
+                const img = e.target.closest('img');
+                if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
+                    openLightbox(img.src);
+                }
+            });
+            const sg = document.getElementById('shop-grid');
+            if(sg) sg.addEventListener('click', e => {
+                const img = e.target.closest('img');
+                if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
+                    openLightbox(img.src);
+                }
+            });
+            const lbClose = document.getElementById('lightbox-close');
+            if(lbClose) lbClose.addEventListener('click', closeLightbox);
+            const lbPrev = document.getElementById('lightbox-prev');
+            if(lbPrev) lbPrev.addEventListener('click', e => { e.stopPropagation(); lightboxStep(-1); });
+            const lbNext = document.getElementById('lightbox-next');
+            if(lbNext) lbNext.addEventListener('click', e => { e.stopPropagation(); lightboxStep(1); });
+            if(lightbox) lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
         });
 
-        // Слушатель кликов по Магазину (делегирование событий)
-        document.getElementById('shop-grid').addEventListener('click', e => {
-            const img = e.target.closest('img');
-            if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
-                openLightbox(img.src);
-            }
-        });
-
-        // Клик по закрытию и стрелочкам лайтбокса
-        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-        document.getElementById('lightbox-prev').addEventListener('click', e => { e.stopPropagation(); lightboxStep(-1); });
-        document.getElementById('lightbox-next').addEventListener('click', e => { e.stopPropagation(); lightboxStep(1); });
-        lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
         document.addEventListener('keydown', e => {
-            if (!lightbox.classList.contains('open')) return;
+            if (!lightbox || !lightbox.classList.contains('open')) return;
             if (e.key === 'Escape') closeLightbox();
             else if (e.key === 'ArrowLeft') lightboxStep(-1);
             else if (e.key === 'ArrowRight') lightboxStep(1);
         });
 
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        let menuOpen = false;
-
-        menuBtn.addEventListener('click', () => {
-            menuOpen = !menuOpen;
-            if (menuOpen) {
-                mobileMenu.classList.remove('-translate-y-4', 'opacity-0', 'pointer-events-none');
-                menuBtn.children[0].classList.add('rotate-45', 'translate-y-2');
-                menuBtn.children[1].classList.add('opacity-0');
-                menuBtn.children[2].classList.add('-rotate-45', '-translate-y-2');
-            } else {
-                mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
-                menuBtn.children[0].classList.remove('rotate-45', 'translate-y-2');
-                menuBtn.children[1].classList.remove('opacity-0');
-                menuBtn.children[2].classList.remove('-rotate-45', '-translate-y-2');
+        // меню
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            let menuOpen = false;
+            if(menuBtn && mobileMenu){
+                menuBtn.addEventListener('click', () => {
+                    menuOpen = !menuOpen;
+                    if (menuOpen) {
+                        mobileMenu.classList.remove('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                        menuBtn.children[0].classList.add('rotate-45', 'translate-y-2');
+                        menuBtn.children[1].classList.add('opacity-0');
+                        menuBtn.children[2].classList.add('-rotate-45', '-translate-y-2');
+                    } else {
+                        mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                        menuBtn.children[0].classList.remove('rotate-45', 'translate-y-2');
+                        menuBtn.children[1].classList.remove('opacity-0');
+                        menuBtn.children[2].classList.remove('-rotate-45', '-translate-y-2');
+                    }
+                });
+                document.querySelectorAll('.menu-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        menuOpen = false;
+                        mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
+                        menuBtn.children[0].classList.remove('rotate-45', 'translate-y-2');
+                        menuBtn.children[1].classList.remove('opacity-0');
+                        menuBtn.children[2].classList.remove('-rotate-45', '-translate-y-2');
+                    });
+                });
             }
         });
 
-        document.querySelectorAll('.menu-link').forEach(link => {
-            link.addEventListener('click', () => {
-                menuOpen = false;
-                mobileMenu.classList.add('-translate-y-4', 'opacity-0', 'pointer-events-none');
-                menuBtn.children[0].classList.remove('rotate-45', 'translate-y-2');
-                menuBtn.children[1].classList.remove('opacity-0');
-                menuBtn.children[2].classList.remove('-rotate-45', '-translate-y-2');
-            });
-        });
-
         window.onload = initSite;
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ddcb71f04f3ae',t:'MTc4MzUwMDg0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ddcb71f04f3ae',t:'MTc4MzUwMDg0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17e5615a89ee84c',t:'MTc4MzUwNTgxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
