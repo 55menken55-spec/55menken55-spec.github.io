@@ -347,6 +347,90 @@
         .editable-active:hover {
             background: rgba(203, 232, 87, 0.2);
         }
+
+        /* ===== REORDER / SWAP MODE STYLES ===== */
+        .reorder-active #port-grid {
+            position: relative;
+        }
+        .reorder-active #port-grid .card-tuch {
+            cursor: grab;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+        .reorder-active #port-grid .card-tuch:active {
+            cursor: grabbing;
+        }
+        .reorder-active #port-grid .card-tuch.dragging {
+            opacity: 0.5;
+            transform: scale(0.95) !important;
+            border-color: var(--tuch-purple) !important;
+            box-shadow: 0 0 30px rgba(198,141,255,0.4) !important;
+        }
+        .reorder-active #port-grid .card-tuch.drag-over {
+            border-color: var(--tuch-lime) !important;
+            box-shadow: 0 0 25px rgba(203,232,87,0.5) !important;
+            transform: scale(1.06) !important;
+        }
+
+        /* Swap mode (click-based) */
+        .swap-active #port-grid .card-tuch {
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .swap-active #port-grid .card-tuch.swap-selected {
+            border-color: #FFD700 !important;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(255, 215, 0, 0.15) !important;
+            transform: scale(1.05) !important;
+            z-index: 10;
+        }
+        .swap-active #port-grid .card-tuch.swap-selected::after {
+            content: '✦ ВЫБРАНО';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFD700;
+            color: #323843;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 20px;
+            z-index: 20;
+            letter-spacing: 0.05em;
+            pointer-events: none;
+            font-family: 'Franklin Gothic', 'Arial Narrow', sans-serif;
+        }
+
+        /* Swap animation */
+        @keyframes swapPulse {
+            0% { transform: scale(1); }
+            30% { transform: scale(0.85); }
+            60% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        .swap-animating {
+            animation: swapPulse 0.45s ease-in-out;
+        }
+
+        /* Reorder bar */
+        #reorder-bar {
+            display: none;
+            background: linear-gradient(135deg, rgba(198,141,255,0.15), rgba(203,232,87,0.15));
+            border: 2px solid var(--tuch-purple);
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+        #reorder-bar .reorder-hint {
+            font-size: 13px;
+            color: rgba(255,255,255,0.85);
+            margin-top: 6px;
+        }
+        #reorder-bar .reorder-hint strong {
+            color: #FFD700;
+        }
     </style>
 </head>
 <body class="theme-tuch">
@@ -477,6 +561,17 @@
                     <button onclick="addNewPortfolioItem()" class="btn-tuch px-6 py-2 text-sm font-bold uppercase">Добавить в портфолио</button>
                 </div>
             </div>
+
+            <!-- ===== REORDER BAR (admin only) ===== -->
+            <div id="reorder-bar">
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <span class="text-sm font-bold text-[#C68DFF] uppercase tracking-wider">🔀 Порядок картинок:</span>
+                    <button id="btn-toggle-drag" onclick="toggleDragMode()" class="btn-tuch px-4 py-1.5 text-xs font-bold uppercase">↕️ Перетаскивание</button>
+                    <button id="btn-toggle-swap" onclick="toggleSwapMode()" class="btn-tuch px-4 py-1.5 text-xs font-bold uppercase">🔄 Обмен местами</button>
+                    <button id="btn-save-order" onclick="savePortfolioOrder()" class="btn-tuch px-4 py-1.5 text-xs font-bold uppercase bg-[#CBE857] text-[#323843] hover:bg-[#C68DFF] hover:text-white" style="display:none;">💾 Сохранить порядок</button>
+                </div>
+                <p id="reorder-hint" class="reorder-hint"></p>
+            </div>
             
             <div id="port-filters" class="flex flex-wrap justify-center gap-4 mb-12">
                 <!-- Filters will be injected by JS -->
@@ -563,22 +658,18 @@
         </div>
     </section>
 
-    <!-- Секция Обо мне (Стилизация в соответствии с присланным изображением и новым аватаром) -->
+    <!-- Секция Обо мне -->
     <section id="about" class="py-20 px-6 relative overflow-hidden bg-[#323843] border-t-4 border-b-4 border-[#CBE857]/20">
         <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative">
             
-            <!-- Левая колонка с кастомным оформлением текстов и стильной лягушкой -->
             <div class="w-full md:w-1/2 text-left relative flex flex-col justify-between">
                 
-                <!-- Огромный заголовок "О СЕБЕ" в стиле граффити/бабл -->
                 <div class="mb-6 select-none flex items-center gap-1">
                     <span class="text-[#CBE857] text-6xl md:text-7xl font-black font-marker tracking-wide drop-shadow-[0_4px_0_rgba(0,0,0,0.4)] uppercase">
                         : О СЕБЕ
                     </span>
-                    
                 </div>
 
-                <!-- Блок текстов -->
                 <div class="space-y-6 text-white/90 text-xl leading-relaxed max-w-md">
                     <p id="about-p1" data-edit-id="about-paragraph-1" class="font-bold text-white tracking-wide text-2xl">
                         Привет! Я Розалия.
@@ -596,14 +687,9 @@
 
             </div>
 
-            <!-- Правая колонка: Вертикальное большое фото с розовой звездочкой -->
             <div class="w-full md:w-1/2 flex justify-center relative">
                 <div id="about-photo-wrapper" class="relative rounded-3xl overflow-hidden shadow-2xl max-w-xs md:max-w-sm w-full border-4 border-[#C68DFF]">
-                    
-                    <!-- Фотография (Кликабельна для открытия в лайтбоксе!) -->
                     <img id="about-img" onclick="openLightbox(this.src)" src="https://i.ibb.co/TM9WvrFw/photo-2023-09-14-05-47-33.jpg" alt="Розалия | Тученция" class="w-full aspect-[3/4] object-cover filter brightness-95 transition-transform duration-300">
-                    
-                    <!-- Оверлей админа (показывается только в режиме админа) -->
                     <div id="about-admin-overlay" class="hidden absolute inset-0 bg-black/75 flex items-center justify-center">
                         <button onclick="triggerReplaceAboutImage()" class="bg-[#CBE857] text-[#323843] font-bold px-6 py-2.5 rounded-full text-xs uppercase hover:scale-105 transition">
                             Сменить фото автора
@@ -621,7 +707,6 @@
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
         </svg>
 
-        <!-- Frog decoration -->
         <div class="absolute bottom-4 right-4 md:right-16 opacity-90 float-anim">
             <img src="https://i.ibb.co/hFQp7tCk/res-22.png" alt="Лягушка" class="w-24 md:w-32 h-auto drop-shadow-lg" style="mix-blend-mode: screen;" loading="lazy">
         </div>
@@ -637,13 +722,12 @@
     </section>
 
     <footer class="py-10 text-center opacity-50 text-sm relative">
-        <!-- Секретный триггер: фиолетовая звездочка в самом низу справа. При нажатии активирует вход в админку! -->
         <svg id="admin-secret-star" class="star-burst bottom-4 right-8 twinkle cursor-pointer hover:scale-125 transition-transform" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s; pointer-events: none;">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF" opacity="0.8"/>
         </svg>
         <p>&copy; 2026 Тученция. Создано с любовью к искусству.</p>
     </footer>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
         
         // ========== SUPABASE INTEGRATION FOR ТУЧЕНЦИЯ ==========
         const SUPABASE_URL = "https://lwzvgeeigqfvmatlihms.supabase.co";
@@ -677,7 +761,10 @@
 
         let isAdmin = localStorage.getItem('t_isAdmin') === 'true';
 
-        // Тексты (оставили локально, можно позже вынести в site_texts)
+        // --- REORDER STATE ---
+        let reorderMode = null; // null | 'drag' | 'swap'
+        let swapSelectedIndex = null; // index of first selected card in swap mode
+        let orderDirty = false; // whether the order has been changed and needs saving
 
         const services = [
             { title: 'Иллюстрация', desc: 'Персонажи, сюжеты и концепты в авторском стиле.', price: 'от 1 500 ₽' },
@@ -709,16 +796,31 @@
         // ---------- SUPABASE DATA LAYER ----------
         async function loadPortfolioFromSupabase(){
             try{
-                const { data, error } = await sb.from('portfolio')
-                  .select('id, category, image_url, title, created_at')
+                // Пытаемся загрузить с sort_order; если колонки нет — грузим без неё
+                let data, error;
+                const res = await sb.from('portfolio')
+                  .select('id, category, image_url, title, created_at, sort_order')
+                  .order('sort_order', { ascending: true, nullsFirst: false })
                   .order('created_at', { ascending: false });
-                if(error) throw error;
+                data = res.data;
+                error = res.error;
+                if(error){
+                    // Если ошибка из-за отсутствия sort_order — пробуем без неё
+                    console.warn('sort_order query failed, retrying without it:', error.message);
+                    const fallback = await sb.from('portfolio')
+                      .select('id, category, image_url, title, created_at')
+                      .order('created_at', { ascending: false });
+                    data = fallback.data;
+                    error = fallback.error;
+                    if(error) throw error;
+                }
                 if(data && data.length){
-                    portfolioItems = data.map(r => ({
+                    portfolioItems = data.map((r, i) => ({
                         id: r.id,
                         category: r.category || 'Иллюстрация',
                         img: r.image_url,
-                        title: r.title || ''
+                        title: r.title || '',
+                        sort_order: r.sort_order != null ? r.sort_order : i
                     }));
                     return true;
                 } else {
@@ -776,8 +878,8 @@
                 if(loader){ loader.classList.add('hidden'); loader.classList.remove('flex'); }
             }
         }
-function showToast(msg, isErr){
-            // простой тост
+
+        function showToast(msg, isErr){
             let t = document.getElementById('sb-toast');
             if(!t){
                 t = document.createElement('div');
@@ -793,7 +895,7 @@ function showToast(msg, isErr){
         }
 
         async function initSite() {
-            // about avatar — сначала пробуем Supabase site_settings
+            // about avatar
             try{
                 const { data:avData } = await sb.from('site_settings').select('value').eq('key','about_avatar_url').maybeSingle();
                 const supaAvatar = avData?.value;
@@ -813,7 +915,6 @@ function showToast(msg, isErr){
             // Грузим из Supabase
             const okP = await loadPortfolioFromSupabase();
             if(!okP){
-                // fallback: localStorage или default
                 const local = JSON.parse(localStorage.getItem('t_portfolio')||'null');
                 portfolioItems = local && local.length ? local : defaultPortfolioItems.map((x,i)=>({...x, id:'local-'+i}));
                 showToast('Портфолио: локальный fallback', true);
@@ -868,7 +969,6 @@ function showToast(msg, isErr){
 
             renderShopGrid();
 
-            // статус подключения
             const statusEl = document.getElementById('supabase-status');
             if(statusEl){
                 statusEl.textContent = okP ? `Supabase ✓ ${portfolioItems.length} работ` : 'Supabase offline – local fallback';
@@ -877,7 +977,6 @@ function showToast(msg, isErr){
         }
 
         async function loadSavedTexts() {
-            // 1) пробуем Supabase
             try{
                 const { data, error } = await sb.from('site_texts').select('id, value');
                 if(!error && data && data.length){
@@ -890,7 +989,6 @@ function showToast(msg, isErr){
                     return;
                 }
             }catch(e){ console.warn('site_texts supabase fail', e); }
-            // 2) fallback localStorage
             const savedTexts = JSON.parse(localStorage.getItem('t_texts')) || {};
             Object.keys(savedTexts).forEach(id => {
                 const el = document.querySelector(`[data-edit-id="${id}"]`);
@@ -945,6 +1043,10 @@ function showToast(msg, isErr){
                 });
                 renderShowMoreButton(false);
             }
+
+            // Re-attach drag/swap listeners after render
+            if(reorderMode === 'drag') attachDragListeners();
+            if(reorderMode === 'swap') attachSwapListeners();
         }
 
         function createCardElement(item, globalIndex, isPreview, isExtra, isVisible = true, isFirstScreen = false) {
@@ -957,15 +1059,16 @@ function showToast(msg, isErr){
 
             const loadingStrategy = isFirstScreen ? 'eager' : 'lazy';
             const imgSrc = item.img || item.image_url || '';
-            let html = `<img src="${imgSrc}" class="w-full h-full object-cover" loading="${loadingStrategy}" width="280" height="280" alt="${item.category} - Работа Розалии">`;
+            let html = `<img src="${imgSrc}" class="w-full h-full object-cover" loading="${loadingStrategy}" width="280" height="280" alt="${item.category} - Работа Розалии" draggable="false">`;
 
+            // Admin overlay (Заменить / Удалить)
             if (isAdmin) {
                 html += `
-                    <div class="absolute inset-0 bg-black/75 flex flex-col justify-between p-3 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                    <div class="card-admin-overlay absolute inset-0 bg-black/75 flex flex-col justify-between p-3 opacity-0 hover:opacity-100 transition-opacity duration-200">
                         <span class="text-xs bg-[#CBE857] text-[#323843] font-bold px-2 py-1 rounded self-start">${item.category}</span>
                         <div class="flex flex-col gap-2">
-                            <button onclick="triggerReplaceImage(${globalIndex})" class="w-full bg-[#C68DFF] text-white hover:bg-white hover:text-[#323843] transition py-1.5 rounded-lg text-xs font-bold uppercase">Заменить</button>
-                            <button onclick="deletePortfolioItem(${globalIndex})" class="w-full bg-red-500 hover:bg-red-600 transition text-white py-1.5 rounded-lg text-xs font-bold uppercase">Удалить</button>
+                            <button onclick="event.stopPropagation(); triggerReplaceImage(${globalIndex})" class="w-full bg-[#C68DFF] text-white hover:bg-white hover:text-[#323843] transition py-1.5 rounded-lg text-xs font-bold uppercase">Заменить</button>
+                            <button onclick="event.stopPropagation(); deletePortfolioItem(${globalIndex})" class="w-full bg-red-500 hover:bg-red-600 transition text-white py-1.5 rounded-lg text-xs font-bold uppercase">Удалить</button>
                         </div>
                     </div>
                 `;
@@ -1061,13 +1164,17 @@ function showToast(msg, isErr){
                 if (confirm('Выйти из режима администратора?')) {
                     isAdmin = false;
                     localStorage.removeItem('t_isAdmin');
+                    // Reset reorder mode when leaving admin
+                    reorderMode = null;
+                    swapSelectedIndex = null;
+                    orderDirty = false;
                 }
             }
             updateAdminUI();
             initSite();
         }
         window.toggleAdminMode = toggleAdminMode;
-window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
+        window.adminLogin = toggleAdminMode;
 
         function updateAdminUI() {
             const uploadPanel = document.getElementById('admin-upload-panel');
@@ -1075,12 +1182,14 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
             const indicator = document.getElementById('admin-indicator');
             const secretStar = document.getElementById('admin-secret-star');
             const aboutOverlay = document.getElementById('about-admin-overlay');
+            const reorderBar = document.getElementById('reorder-bar');
 
             if (isAdmin) {
                 if(uploadPanel) uploadPanel.classList.remove('hidden');
                 if(shopPanel) shopPanel.classList.remove('hidden');
                 if(indicator) indicator.classList.remove('hidden');
                 if(secretStar) secretStar.setAttribute('fill', '#CBE857');
+                if(reorderBar) reorderBar.style.display = 'block';
                 enableTextEditing(true);
                 
                 if (aboutOverlay) {
@@ -1091,6 +1200,7 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
                 if(shopPanel) shopPanel.classList.add('hidden');
                 if(indicator) indicator.classList.add('hidden');
                 if(secretStar) secretStar.setAttribute('fill', '#C68DFF');
+                if(reorderBar) reorderBar.style.display = 'none';
                 enableTextEditing(false);
 
                 if (aboutOverlay) {
@@ -1119,12 +1229,10 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
             const id = el.dataset.editId;
             const newText = el.innerText.trim();
 
-            // локальный кэш сразу
             const savedTexts = JSON.parse(localStorage.getItem('t_texts')) || {};
             savedTexts[id] = newText;
             localStorage.setItem('t_texts', JSON.stringify(savedTexts));
 
-            // Supabase upsert
             try{
                 const { error } = await sb.from('site_texts')
                   .upsert({ id, value: newText }, { onConflict: 'id' });
@@ -1142,14 +1250,12 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
             const item = shopItems[index];
             if(!item) return;
             shopItems[index][field] = newText;
-            // пробуем сохранить в Supabase
             if(item.id && !String(item.id).startsWith('local-')){
                 try{
                     const update = {};
                     if(field==='name') update.name = newText;
                     if(field==='price'){
                         update.price = newText;
-                        // пробуем вытащить число
                         const num = parseFloat(newText.replace(/[^\d.]/g,''));
                         if(!isNaN(num)) update.price_numeric = num;
                     }
@@ -1202,10 +1308,14 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
                 }
                 if(!imageUrl) throw new Error('Нет URL изображения');
 
+                // Assign sort_order = max + 1
+                const maxOrder = portfolioItems.reduce((max, it) => Math.max(max, it.sort_order || 0), 0);
+
                 const { data, error } = await sb.from('portfolio').insert({
                     category,
                     image_url: imageUrl,
-                    title: category
+                    title: category,
+                    sort_order: maxOrder + 1
                 }).select().single();
                 if(error) throw error;
                 showToast('Добавлено в Supabase ✓');
@@ -1235,7 +1345,6 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
                 const uploadedUrl = await uploadFileToSupabase(file, 'shop');
                 if(!uploadedUrl) throw new Error('Загрузка не удалась');
 
-                // пробуем распарсить цену в число
                 const priceNum = parseFloat(price.replace(/[^\d.]/g,''));
                 const payload = {
                     name,
@@ -1244,7 +1353,6 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
                     image_url: uploadedUrl,
                     available: true
                 };
-                // также сохраним текстовую цену если есть колонка price_text – игнорируем ошибку
                 const { error } = await sb.from('shop').insert(payload);
                 if(error) throw error;
 
@@ -1290,19 +1398,16 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
             const imgInfo = item.img ? "\n" + item.img : "";
             if (!confirm('Удалить эту работу из портфолио?\nФайл изображения также будет удалён из Supabase Storage.' + imgInfo)) return;
             try{
-                // 1) Storage cleanup
                 if(item.img){
                     const delRes = await deleteStorageFileByUrl(item.img);
                     if(delRes.ok){
                         showToast('Файл удалён из Storage: '+delRes.path);
                     }
                 }
-                // 2) DB delete
                 if(item.id && !String(item.id).startsWith('local-')){
                     const { error } = await sb.from('portfolio').delete().eq('id', item.id);
                     if(error) throw error;
                 } else {
-                    // fallback local
                     portfolioItems.splice(index, 1);
                     localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
                 }
@@ -1406,7 +1511,6 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
                 const file = e.target.files[0];
                 try{
                     const uploadedUrl = await uploadFileToSupabase(file, 'about');
-                    // удаляем старый аватар
                     try{
                         const { data: oldAv } = await sb.from('site_settings').select('value').eq('key','about_avatar_url').maybeSingle();
                         if(oldAv?.value && oldAv.value !== uploadedUrl){
@@ -1420,7 +1524,6 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
                             if(oldPath) await sb.storage.from(BUCKET).remove([oldPath]);
                         }
                     }catch(_){}
-                    // сохраняем в site_settings
                     const { error: upErr } = await sb.from('site_settings')
                       .upsert({ key: 'about_avatar_url', value: uploadedUrl }, { onConflict: 'key' });
                     if(upErr) throw upErr;
@@ -1436,7 +1539,226 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
             });
         });
 
-        /* ===== Лайтбокс (без изменений) ===== */
+        /* ===== REORDER: DRAG MODE ===== */
+        let dragSrcIndex = null;
+
+        function toggleDragMode() {
+            if(reorderMode === 'drag'){
+                reorderMode = null;
+            } else {
+                reorderMode = 'drag';
+                swapSelectedIndex = null;
+            }
+            updateReorderUI();
+            renderPortfolioGrid();
+        }
+        window.toggleDragMode = toggleDragMode;
+
+        function attachDragListeners() {
+            const cards = document.querySelectorAll('#port-grid .card-tuch');
+            const grid = document.getElementById('port-grid');
+            if(!grid || !cards.length) return;
+
+            cards.forEach(card => {
+                card.setAttribute('draggable', 'true');
+
+                card.addEventListener('dragstart', function(e) {
+                    dragSrcIndex = parseInt(this.dataset.index);
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', dragSrcIndex);
+                });
+
+                card.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    document.querySelectorAll('#port-grid .card-tuch').forEach(c => c.classList.remove('drag-over'));
+                    dragSrcIndex = null;
+                });
+
+                card.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    this.classList.add('drag-over');
+                });
+
+                card.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    const targetIndex = parseInt(this.dataset.index);
+                    if(dragSrcIndex !== null && dragSrcIndex !== targetIndex) {
+                        swapPortfolioItems(dragSrcIndex, targetIndex);
+                    }
+                });
+            });
+        }
+
+        /* ===== REORDER: SWAP MODE (click-based) ===== */
+        function toggleSwapMode() {
+            if(reorderMode === 'swap'){
+                reorderMode = null;
+                swapSelectedIndex = null;
+            } else {
+                reorderMode = 'swap';
+                swapSelectedIndex = null;
+            }
+            updateReorderUI();
+            renderPortfolioGrid();
+        }
+        window.toggleSwapMode = toggleSwapMode;
+
+        function attachSwapListeners() {
+            const cards = document.querySelectorAll('#port-grid .card-tuch');
+            cards.forEach(card => {
+                card.addEventListener('click', handleSwapClick);
+            });
+        }
+
+        function handleSwapClick(e) {
+            // Ignore clicks on admin overlay buttons
+            if(e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+
+            const card = e.currentTarget;
+            const clickedIndex = parseInt(card.dataset.index);
+
+            if(swapSelectedIndex === null) {
+                // First selection
+                swapSelectedIndex = clickedIndex;
+                card.classList.add('swap-selected');
+                updateReorderHint('Теперь нажмите на вторую картинку для обмена местами');
+            } else if(swapSelectedIndex === clickedIndex) {
+                // Deselect
+                swapSelectedIndex = null;
+                card.classList.remove('swap-selected');
+                updateReorderHint('');
+            } else {
+                // Second selection → swap!
+                const firstCard = document.querySelector(`#port-grid .card-tuch[data-index="${swapSelectedIndex}"]`);
+                if(firstCard) firstCard.classList.remove('swap-selected');
+
+                swapPortfolioItems(swapSelectedIndex, clickedIndex);
+                swapSelectedIndex = null;
+            }
+        }
+
+        function swapPortfolioItems(idxA, idxB) {
+            if(idxA === idxB) return;
+            if(idxA < 0 || idxB < 0 || idxA >= portfolioItems.length || idxB >= portfolioItems.length) return;
+
+            // Animate
+            const cardA = document.querySelector(`#port-grid .card-tuch[data-index="${idxA}"]`);
+            const cardB = document.querySelector(`#port-grid .card-tuch[data-index="${idxB}"]`);
+            if(cardA) cardA.classList.add('swap-animating');
+            if(cardB) cardB.classList.add('swap-animating');
+
+            // Swap in array
+            const temp = portfolioItems[idxA];
+            portfolioItems[idxA] = portfolioItems[idxB];
+            portfolioItems[idxB] = temp;
+
+            // Update sort_order locally
+            const tmpOrder = portfolioItems[idxA].sort_order;
+            portfolioItems[idxA].sort_order = portfolioItems[idxB].sort_order;
+            portfolioItems[idxB].sort_order = tmpOrder;
+
+            orderDirty = true;
+            showSaveButton(true);
+            showToast('Картинки поменяны местами! Нажмите «Сохранить порядок» 💾');
+
+            // Re-render after animation
+            setTimeout(() => {
+                renderPortfolioGrid();
+            }, 450);
+        }
+
+        /* ===== SAVE ORDER TO SUPABASE ===== */
+        async function savePortfolioOrder() {
+            const btn = document.getElementById('btn-save-order');
+            if(btn) btn.innerHTML = '<span class="loader"></span> Сохранение...';
+
+            try {
+                // Assign sequential sort_order values based on current array position
+                const updates = [];
+                portfolioItems.forEach((item, i) => {
+                    item.sort_order = i;
+                    if(item.id && !String(item.id).startsWith('local-')) {
+                        updates.push({ id: item.id, sort_order: i });
+                    }
+                });
+
+                if(updates.length > 0) {
+                    // Batch update each item's sort_order
+                    const promises = updates.map(u =>
+                        sb.from('portfolio').update({ sort_order: u.sort_order }).eq('id', u.id)
+                    );
+                    const results = await Promise.all(promises);
+                    const firstErr = results.find(r => r.error);
+                    if(firstErr) throw firstErr.error;
+                }
+
+                // Also save to localStorage as fallback
+                localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
+
+                orderDirty = false;
+                showSaveButton(false);
+                showToast('Порядок сохранён в Supabase ✓');
+            } catch(e) {
+                console.error('Save order error:', e);
+                // Save locally even if Supabase fails
+                localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
+                showToast('Ошибка Supabase: '+e.message+' (порядок сохранён локально)', true);
+            }
+
+            if(btn) btn.innerHTML = '💾 Сохранить порядок';
+        }
+        window.savePortfolioOrder = savePortfolioOrder;
+
+        function showSaveButton(show) {
+            const btn = document.getElementById('btn-save-order');
+            if(btn) btn.style.display = show ? 'inline-block' : 'none';
+        }
+
+        function updateReorderUI() {
+            const bar = document.getElementById('reorder-bar');
+            const btnDrag = document.getElementById('btn-toggle-drag');
+            const btnSwap = document.getElementById('btn-toggle-swap');
+            const section = document.getElementById('portfolio');
+
+            // Reset classes
+            if(section) {
+                section.classList.remove('reorder-active', 'swap-active');
+            }
+            if(btnDrag) {
+                btnDrag.style.background = '';
+                btnDrag.style.color = '';
+            }
+            if(btnSwap) {
+                btnSwap.style.background = '';
+                btnSwap.style.color = '';
+            }
+
+            if(reorderMode === 'drag') {
+                if(section) section.classList.add('reorder-active');
+                if(btnDrag) { btnDrag.style.background = '#CBE857'; btnDrag.style.color = '#323843'; }
+                updateReorderHint('Перетаскивайте карточки для изменения порядка');
+            } else if(reorderMode === 'swap') {
+                if(section) section.classList.add('swap-active');
+                if(btnSwap) { btnSwap.style.background = '#FFD700'; btnSwap.style.color = '#323843'; }
+                updateReorderHint('Нажмите на первую картинку для выбора');
+            } else {
+                updateReorderHint('');
+            }
+        }
+
+        function updateReorderHint(text) {
+            const hint = document.getElementById('reorder-hint');
+            if(hint) hint.innerHTML = text ? `<strong>💡</strong> ${text}` : '';
+        }
+
+        /* ===== Лайтбокс ===== */
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxCounter = document.getElementById('lightbox-counter');
@@ -1459,6 +1781,8 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
         }
 
         function openLightbox(src) {
+            // Don't open lightbox in swap/drag mode
+            if(reorderMode) return;
             if (isAdmin && event && event.target.tagName === 'BUTTON') return;
             lightboxList = getVisibleImagesInContext(src);
             lightboxIndex = Math.max(0, lightboxList.indexOf(src));
@@ -1492,6 +1816,8 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
         document.addEventListener('DOMContentLoaded', ()=>{
             const pg = document.getElementById('port-grid');
             if(pg) pg.addEventListener('click', e => {
+                // In swap mode, don't open lightbox
+                if(reorderMode) return;
                 const img = e.target.closest('img');
                 if (img && (!isAdmin || e.target.tagName !== 'BUTTON')) {
                     openLightbox(img.src);
@@ -1554,5 +1880,5 @@ window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
 
         window.onload = initSite;
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ec2487e77dd81',t:'MTc4MzUxMDI0Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
