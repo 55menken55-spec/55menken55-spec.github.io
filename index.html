@@ -631,7 +631,7 @@
             <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition">tychencya779@gmail.com</a>
+                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="7e0a071d161b101d071f4949473e19131f1712501d1113">[email&#160;protected]</span></a>
             </div>
         </div>
     </section>
@@ -807,10 +807,18 @@
         }
 
         async function initSite() {
-            const savedAboutImg = localStorage.getItem('t_about_img');
-            if (savedAboutImg) {
-                const aImg = document.getElementById('about-img');
-                if(aImg) aImg.src = savedAboutImg;
+            // about avatar — сначала пробуем Supabase site_settings
+            try{
+                const { data:avData } = await sb.from('site_settings').select('value').eq('key','about_avatar_url').maybeSingle();
+                const supaAvatar = avData?.value;
+                const savedAboutImg = supaAvatar || localStorage.getItem('t_about_img');
+                if (savedAboutImg) {
+                    const aImg = document.getElementById('about-img');
+                    if(aImg) aImg.src = savedAboutImg;
+                }
+            }catch(e){ 
+                const savedAboutImg = localStorage.getItem('t_about_img');
+                if (savedAboutImg) { const aImg=document.getElementById('about-img'); if(aImg) aImg.src=savedAboutImg; }
             }
 
             await loadSavedTexts();
@@ -1267,32 +1275,85 @@
         }
         window.addNewShopItem = addNewShopItem;
 
+
+        // === Storage auto-cleanup helpers ===
+        function getSupabaseStoragePath(url){
+            if(!url || typeof url !== 'string') return null;
+            try{
+                // ожидаем .../storage/v1/object/public/artworks/<path>
+                const marker = `/object/public/${BUCKET}/`;
+                const i = url.indexOf(marker);
+                if(i === -1) return null;
+                return decodeURIComponent(url.substring(i + marker.length).split('?')[0]);
+            }catch(e){ return null; }
+        }
+        async function deleteStorageFileByUrl(url){
+            const path = getSupabaseStoragePath(url);
+            if(!path) return {skipped:true, reason:'not a supabase storage url'};
+            try{
+                const { data, error } = await sb.storage.from(BUCKET).remove([path]);
+                if(error) throw error;
+                return {ok:true, path};
+            }catch(e){
+                console.warn('storage delete failed', path, e);
+                return {ok:false, error:e.message, path};
+            }
+        }
+
+
         window.deletePortfolioItem = async function(index) {
             const item = portfolioItems[index];
             if(!item) return;
-            if (!confirm('Удалить эту работу из портфолио (Supabase)?')) return;
+            const imgInfo = item.img ? `\n${item.img}` : '';
+            if (!confirm('Удалить эту работу из портфолио?\nФайл изображения также будет удалён из Supabase Storage.' + imgInfo)) return;
             try{
+                // 1) удаляем файл из Storage (если это наш supabase url)
+                if(item.img){
+                    const delRes = await deleteStorageFileByUrl(item.img);
+                    if(delRes.ok){
+                        showToast('Файл удалён из Storage: '+delRes.path);
+                    } else if(!delRes.skipped){
+                        console.warn('Не удалось удалить файл из Storage:', delRes);
+                        // не критично — продолжаем удаление записи
+                    }
+                }
+                // 2) удаляем запись из БД
                 if(item.id && !String(item.id).startsWith('local-')){
                     const { error } = await sb.from('portfolio').delete().eq('id', item.id);
                     if(error) throw error;
                 }
-                showToast('Удалено');
+                showToast('Удалено из портфолио ✓');
                 await initSite();
-            }catch(e){ alert(e.message); }
+            }catch(e){ 
+                alert('Ошибка удаления: '+e.message); 
+                showToast(e.message, true);
+            }
         };
 
         window.deleteShopItem = async function(index) {
             const item = shopItems[index];
             if(!item) return;
-            if (!confirm('Удалить товар из магазина?')) return;
+            const imgInfo = item.img ? `\n${item.img}` : '';
+            if (!confirm('Удалить товар из магазина?\nИзображение будет удалено из Supabase Storage.' + imgInfo)) return;
             try{
+                // 1) Storage cleanup
+                if(item.img){
+                    const delRes = await deleteStorageFileByUrl(item.img);
+                    if(delRes.ok){
+                        showToast('Файл товара удалён: '+delRes.path);
+                    }
+                }
+                // 2) DB delete
                 if(item.id && !String(item.id).startsWith('local-')){
                     const { error } = await sb.from('shop').delete().eq('id', item.id);
                     if(error) throw error;
                 }
-                showToast('Товар удалён');
+                showToast('Товар удалён ✓');
                 await initSite();
-            }catch(e){ alert(e.message); }
+            }catch(e){ 
+                alert('Ошибка удаления: '+e.message);
+                showToast(e.message, true);
+            }
         };
 
         let replaceTargetIndex = null;
@@ -1362,15 +1423,28 @@
                 const file = e.target.files[0];
                 try{
                     const uploadedUrl = await uploadFileToSupabase(file, 'about');
+                    // удаляем старый аватар из Storage, если он был supabase-овский
+                    try{
+                        const { data: oldAv } = await sb.from('site_settings').select('value').eq('key','about_avatar_url').maybeSingle();
+                        if(oldAv?.value && oldAv.value !== uploadedUrl){
+                            await deleteStorageFileByUrl(oldAv.value);
+                        }
+                    }catch(_){}
+                    // сохраняем глобально в site_settings
+                    const { error: upErr } = await sb.from('site_settings')
+                      .upsert({ key: 'about_avatar_url', value: uploadedUrl }, { onConflict: 'key' });
+                    if(upErr) throw upErr;
                     const aboutImg = document.getElementById('about-img');
                     if(aboutImg) aboutImg.src = uploadedUrl;
                     localStorage.setItem('t_about_img', uploadedUrl);
-                    showToast('Фото автора обновлено');
-                    alert('Главная фотография автора обновлена (Supabase Storage). URL сохранён локально, для глобального – добавьте таблицу site_settings.');
-                }catch(err){ alert(err.message); }
+                    showToast('Фото автора обновлено в Supabase ✓');
+                }catch(err){
+                    showToast('Ошибка: '+err.message, true);
+                    alert('Ошибка обновления аватара: '+err.message);
+                }
                 e.target.value = '';
             });
-        });
+
 
         /* ===== Лайтбокс (без изменений) ===== */
         const lightbox = document.getElementById('lightbox');
@@ -1490,5 +1564,5 @@
 
         window.onload = initSite;
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ddcb71f04f3ae',t:'MTc4MzUwMDg0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17e5615a89ee84c',t:'MTc4MzUwNTgxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ddcb71f04f3ae',t:'MTc4MzUwMDg0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17e92a81db74673',t:'MTc4MzUwODI5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
