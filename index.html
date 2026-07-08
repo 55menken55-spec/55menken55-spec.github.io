@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<!-- Тученция • Supabase production build • 2026-07-08 -->
+<meta name="robots" content="index,follow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -250,7 +252,7 @@
         }
         #lightbox.open {
             opacity: 1;
-            pointer-events: auto;
+            pointer-events: none;
         }
         #lightbox img {
             max-width: 92vw;
@@ -424,10 +426,9 @@
                     <span>☁️ Загрузка в Supabase Storage</span>
                 </h3>
 
-                <!-- ImgBB API Key settings -->
                 <div class="mb-4 bg-black/20 p-3 rounded-lg border border-white/10">
                     <label class="block text-xs mb-1 text-[#C68DFF] font-bold uppercase">Supabase Storage:</label>
-                    <input type="text" id="imgbb-api-key" placeholder="artworks bucket • https://lwzvgeeigqfvmatlihms.supabase.co" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#CBE857]">
+                    <input type="text" id="supabase-key" readonly disabled placeholder="artworks bucket • https://lwzvgeeigqfvmatlihms.supabase.co" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#CBE857]">
                     <span class="text-[10px] text-white/50 mt-1 block">
                         Файлы загружаются напрямую в Supabase Storage (bucket <b>artworks</b>), затем URL сохраняется в PostgreSQL. Все посетители видят изменения сразу.
                     </span>
@@ -593,7 +594,6 @@
                     </p>
                 </div>
 
-
             </div>
 
             <!-- Правая колонка: Вертикальное большое фото с розовой звездочкой -->
@@ -631,20 +631,19 @@
             <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition">tychencya779@gmail.com</a>
+                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="bfcbc6dcd7dad1dcc6de888886ffd8d2ded6d391dcd0d2">[email&#160;protected]</span></a>
             </div>
         </div>
     </section>
 
     <footer class="py-10 text-center opacity-50 text-sm relative">
         <!-- Секретный триггер: фиолетовая звездочка в самом низу справа. При нажатии активирует вход в админку! -->
-        <svg id="admin-secret-star" class="star-burst bottom-4 right-8 twinkle" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s;">
+        <svg id="admin-secret-star" class="star-burst bottom-4 right-8 twinkle cursor-pointer hover:scale-125 transition-transform" width="24" height="24" viewBox="0 0 40 40" fill="none" style="animation-delay:0.9s; pointer-events: none;">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF" opacity="0.8"/>
         </svg>
         <p>&copy; 2026 Тученция. Создано с любовью к искусству.</p>
     </footer>
-
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         
         // ========== SUPABASE INTEGRATION FOR ТУЧЕНЦИЯ ==========
         const SUPABASE_URL = "https://lwzvgeeigqfvmatlihms.supabase.co";
@@ -679,7 +678,6 @@
         let isAdmin = localStorage.getItem('t_isAdmin') === 'true';
 
         // Тексты (оставили локально, можно позже вынести в site_texts)
-        let imgbbApiKey = 'supabase'; // заглушка для старого кода
 
         const services = [
             { title: 'Иллюстрация', desc: 'Персонажи, сюжеты и концепты в авторском стиле.', price: 'от 1 500 ₽' },
@@ -778,19 +776,7 @@
                 if(loader){ loader.classList.add('hidden'); loader.classList.remove('flex'); }
             }
         }
-
-        // совместимость со старым названием
-        async function uploadFileToImgBB(file){
-            // теперь это Supabase
-            try{
-                return await uploadFileToSupabase(file, 'portfolio');
-            }catch(e){
-                alert('Ошибка загрузки в Supabase: '+e.message);
-                return null;
-            }
-        }
-
-        function showToast(msg, isErr){
+function showToast(msg, isErr){
             // простой тост
             let t = document.getElementById('sb-toast');
             if(!t){
@@ -899,7 +885,6 @@
                         const el = document.querySelector(`[data-edit-id="${row.id}"]`);
                         if(el) el.innerText = row.value;
                     });
-                    // сохраним локально как кэш
                     const cache={}; data.forEach(r=>cache[r.id]=r.value);
                     localStorage.setItem('t_texts', JSON.stringify(cache));
                     return;
@@ -1068,9 +1053,9 @@
                 if (enteredPass.trim() === correctPasswordString) {
                     isAdmin = true;
                     localStorage.setItem('t_isAdmin', 'true');
-                    alert('Доступ разрешён. Добро пожаловать, Розалия! Supabase-режим включён.');
+                    showToast('Админ-режим включён ✓');
                 } else {
-                    alert('Доступ заблокирован. Неверный ключ администратора!');
+                    showToast('Неверный пароль', true);
                 }
             } else {
                 if (confirm('Выйти из режима администратора?')) {
@@ -1082,7 +1067,7 @@
             initSite();
         }
         window.toggleAdminMode = toggleAdminMode;
-window.adminLogin = toggleAdminMode; // вход только через консоль: adminLogin()
+window.adminLogin = toggleAdminMode; // console-only entry: adminLogin()
 
         function updateAdminUI() {
             const uploadPanel = document.getElementById('admin-upload-panel');
@@ -1276,12 +1261,10 @@ window.adminLogin = toggleAdminMode; // вход только через кон�
         }
         window.addNewShopItem = addNewShopItem;
 
-
         // === Storage auto-cleanup helpers ===
         function getSupabaseStoragePath(url){
             if(!url || typeof url !== 'string') return null;
             try{
-                // ожидаем .../storage/v1/object/public/artworks/<path>
                 const marker = `/object/public/${BUCKET}/`;
                 const i = url.indexOf(marker);
                 if(i === -1) return null;
@@ -1301,32 +1284,32 @@ window.adminLogin = toggleAdminMode; // вход только через кон�
             }
         }
 
-
         window.deletePortfolioItem = async function(index) {
             const item = portfolioItems[index];
             if(!item) return;
-            const imgInfo = item.img ? `\n${item.img}` : '';
+            const imgInfo = item.img ? "\n" + item.img : "";
             if (!confirm('Удалить эту работу из портфолио?\nФайл изображения также будет удалён из Supabase Storage.' + imgInfo)) return;
             try{
-                // 1) удаляем файл из Storage (если это наш supabase url)
+                // 1) Storage cleanup
                 if(item.img){
                     const delRes = await deleteStorageFileByUrl(item.img);
                     if(delRes.ok){
                         showToast('Файл удалён из Storage: '+delRes.path);
-                    } else if(!delRes.skipped){
-                        console.warn('Не удалось удалить файл из Storage:', delRes);
-                        // не критично — продолжаем удаление записи
                     }
                 }
-                // 2) удаляем запись из БД
+                // 2) DB delete
                 if(item.id && !String(item.id).startsWith('local-')){
                     const { error } = await sb.from('portfolio').delete().eq('id', item.id);
                     if(error) throw error;
+                } else {
+                    // fallback local
+                    portfolioItems.splice(index, 1);
+                    localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
                 }
                 showToast('Удалено из портфолио ✓');
                 await initSite();
-            }catch(e){ 
-                alert('Ошибка удаления: '+e.message); 
+            }catch(e){
+                alert('Ошибка удаления: '+e.message);
                 showToast(e.message, true);
             }
         };
@@ -1334,24 +1317,23 @@ window.adminLogin = toggleAdminMode; // вход только через кон�
         window.deleteShopItem = async function(index) {
             const item = shopItems[index];
             if(!item) return;
-            const imgInfo = item.img ? `\n${item.img}` : '';
+            const imgInfo = item.img ? "\n" + item.img : "";
             if (!confirm('Удалить товар из магазина?\nИзображение будет удалено из Supabase Storage.' + imgInfo)) return;
             try{
-                // 1) Storage cleanup
                 if(item.img){
                     const delRes = await deleteStorageFileByUrl(item.img);
-                    if(delRes.ok){
-                        showToast('Файл товара удалён: '+delRes.path);
-                    }
+                    if(delRes.ok){ showToast('Файл товара удалён: '+delRes.path); }
                 }
-                // 2) DB delete
                 if(item.id && !String(item.id).startsWith('local-')){
                     const { error } = await sb.from('shop').delete().eq('id', item.id);
                     if(error) throw error;
+                } else {
+                    shopItems.splice(index,1);
+                    localStorage.setItem('t_shop', JSON.stringify(shopItems));
                 }
                 showToast('Товар удалён ✓');
                 await initSite();
-            }catch(e){ 
+            }catch(e){
                 alert('Ошибка удаления: '+e.message);
                 showToast(e.message, true);
             }
@@ -1424,14 +1406,21 @@ window.adminLogin = toggleAdminMode; // вход только через кон�
                 const file = e.target.files[0];
                 try{
                     const uploadedUrl = await uploadFileToSupabase(file, 'about');
-                    // удаляем старый аватар из Storage, если он был supabase-овский
+                    // удаляем старый аватар
                     try{
                         const { data: oldAv } = await sb.from('site_settings').select('value').eq('key','about_avatar_url').maybeSingle();
                         if(oldAv?.value && oldAv.value !== uploadedUrl){
-                            await deleteStorageFileByUrl(oldAv.value);
+                            const oldPath = (function(u){
+                                try{
+                                    const marker = `/object/public/${BUCKET}/`;
+                                    const i = u.indexOf(marker);
+                                    return i===-1?null:decodeURIComponent(u.substring(i+marker.length).split('?')[0]);
+                                }catch(e){return null}
+                            })(oldAv.value);
+                            if(oldPath) await sb.storage.from(BUCKET).remove([oldPath]);
                         }
                     }catch(_){}
-                    // сохраняем глобально в site_settings
+                    // сохраняем в site_settings
                     const { error: upErr } = await sb.from('site_settings')
                       .upsert({ key: 'about_avatar_url', value: uploadedUrl }, { onConflict: 'key' });
                     if(upErr) throw upErr;
@@ -1445,7 +1434,7 @@ window.adminLogin = toggleAdminMode; // вход только через кон�
                 }
                 e.target.value = '';
             });
-
+        });
 
         /* ===== Лайтбокс (без изменений) ===== */
         const lightbox = document.getElementById('lightbox');
@@ -1565,6 +1554,5 @@ window.adminLogin = toggleAdminMode; // вход только через кон�
 
         window.onload = initSite;
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ddcb71f04f3ae',t:'MTc4MzUwMDg0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ea3c43912dd81',t:'MTc4MzUwODk5Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a17ec2487e77dd81',t:'MTc4MzUxMDI0Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
