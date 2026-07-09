@@ -716,7 +716,7 @@
             <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition">tychencya779@gmail.com</a>
+                <a href="tychencya779@gmail.com" target="_blank" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="bfcbc6dcd7dad1dcc6de888886ffd8d2ded6d391dcd0d2">[email&#160;protected]</span></a>
             </div>
         </div>
     </section>
@@ -807,12 +807,15 @@
                 if(error){
                     // Если ошибка из-за отсутствия sort_order — пробуем без неё
                     console.warn('sort_order query failed, retrying without it:', error.message);
+                    hasSortOrder = false;
                     const fallback = await sb.from('portfolio')
                       .select('id, category, image_url, title, created_at')
                       .order('created_at', { ascending: false });
                     data = fallback.data;
                     error = fallback.error;
                     if(error) throw error;
+                } else {
+                    hasSortOrder = true;
                 }
                 if(data && data.length){
                     portfolioItems = data.map((r, i) => ({
@@ -1311,12 +1314,24 @@
                 // Assign sort_order = max + 1
                 const maxOrder = portfolioItems.reduce((max, it) => Math.max(max, it.sort_order || 0), 0);
 
-                const { data, error } = await sb.from('portfolio').insert({
+                // Try insert with sort_order; if column doesn't exist, retry without it
+                let data, error;
+                const insertPayload = {
                     category,
                     image_url: imageUrl,
                     title: category,
                     sort_order: maxOrder + 1
-                }).select().single();
+                };
+                const res = await sb.from('portfolio').insert(insertPayload).select().single();
+                data = res.data; error = res.error;
+                if(error && error.message && error.message.includes('sort_order')){
+                    // sort_order column doesn't exist — retry without it
+                    console.warn('Insert without sort_order');
+                    const retry = await sb.from('portfolio').insert({
+                        category, image_url: imageUrl, title: category
+                    }).select().single();
+                    data = retry.data; error = retry.error;
+                }
                 if(error) throw error;
                 showToast('Добавлено в Supabase ✓');
                 const urlInput = document.getElementById('admin-new-url');
@@ -1674,10 +1689,56 @@
             }, 450);
         }
 
+        /* ===== DETECT sort_order SUPPORT ===== */
+        let hasSortOrder = false; // set to true once we confirm the column exists
+
+        async function detectSortOrderColumn(){
+            try{
+                // Try a harmless select with sort_order
+                const { error } = await sb.from('portfolio')
+                  .select('id, sort_order')
+                  .limit(1);
+                if(error){
+                    if(error.message && error.message.includes('sort_order')){
+                        hasSortOrder = false;
+                        console.warn('sort_order column does not exist yet.');
+                        return false;
+                    }
+                }
+                hasSortOrder = true;
+                return true;
+            }catch(e){
+                hasSortOrder = false;
+                return false;
+            }
+        }
+
         /* ===== SAVE ORDER TO SUPABASE ===== */
         async function savePortfolioOrder() {
             const btn = document.getElementById('btn-save-order');
             if(btn) btn.innerHTML = '<span class="loader"></span> Сохранение...';
+
+            // Check if sort_order column exists
+            if(!hasSortOrder){
+                const ok = await detectSortOrderColumn();
+                if(!ok){
+                    // Save locally
+                    portfolioItems.forEach((item, i) => { item.sort_order = i; });
+                    localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
+                    orderDirty = false;
+                    showSaveButton(false);
+                    if(btn) btn.innerHTML = '💾 Сохранить порядок';
+
+                    // Show migration instructions
+                    const msg = '⚠️ В таблице portfolio нет колонки sort_order!\n\n' +
+                        'Откройте Supabase Dashboard → SQL Editor и выполните:\n\n' +
+                        'ALTER TABLE portfolio ADD COLUMN sort_order INTEGER DEFAULT 0;\n\n' +
+                        'После этого нажмите «Сохранить порядок» ещё раз.';
+                    alert(msg);
+                    showToast('Нет колонки sort_order — порядок сохранён локально', true);
+                    return;
+                }
+            }
 
             try {
                 // Assign sequential sort_order values based on current array position
@@ -1709,7 +1770,7 @@
                 console.error('Save order error:', e);
                 // Save locally even if Supabase fails
                 localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
-                showToast('Ошибка Supabase: '+e.message+' (порядок сохранён локально)', true);
+                showToast('Ошибка: '+e.message+' (порядок сохранён локально)', true);
             }
 
             if(btn) btn.innerHTML = '💾 Сохранить порядок';
