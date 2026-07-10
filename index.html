@@ -51,6 +51,81 @@
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* Звёздный фон */
+            background-image:
+                radial-gradient(1.5px 1.5px at 8% 12%, rgba(203, 232, 87, 0.9), transparent),
+                radial-gradient(1px 1px at 18% 28%, rgba(255, 255, 255, 0.85), transparent),
+                radial-gradient(1.5px 1.5px at 32% 8%, rgba(198, 141, 255, 0.85), transparent),
+                radial-gradient(1px 1px at 45% 42%, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(2px 2px at 58% 18%, rgba(203, 232, 87, 0.75), transparent),
+                radial-gradient(1px 1px at 72% 35%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1.5px 1.5px at 85% 14%, rgba(198, 141, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 92% 48%, rgba(255, 255, 255, 0.65), transparent),
+                radial-gradient(1.5px 1.5px at 12% 62%, rgba(203, 232, 87, 0.7), transparent),
+                radial-gradient(1px 1px at 28% 78%, rgba(255, 255, 255, 0.75), transparent),
+                radial-gradient(2px 2px at 40% 55%, rgba(198, 141, 255, 0.7), transparent),
+                radial-gradient(1px 1px at 55% 88%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1.5px 1.5px at 68% 68%, rgba(203, 232, 87, 0.65), transparent),
+                radial-gradient(1px 1px at 80% 82%, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(1.5px 1.5px at 95% 72%, rgba(198, 141, 255, 0.75), transparent),
+                radial-gradient(1px 1px at 5% 90%, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(1px 1px at 22% 48%, rgba(203, 232, 87, 0.55), transparent),
+                radial-gradient(1.5px 1.5px at 50% 30%, rgba(255, 255, 255, 0.55), transparent),
+                radial-gradient(1px 1px at 63% 50%, rgba(198, 141, 255, 0.6), transparent),
+                radial-gradient(1px 1px at 75% 10%, rgba(255, 255, 255, 0.7), transparent);
+            background-size: 100% 100%;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        /* Дополнительный слой мерцающих звёзд на всём сайте */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(1.5px 1.5px at 25% 40%, rgba(203, 232, 87, 0.7), transparent),
+                radial-gradient(1px 1px at 40% 15%, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1px 1px at 55% 60%, rgba(198, 141, 255, 0.75), transparent),
+                radial-gradient(1.5px 1.5px at 70% 25%, rgba(255, 255, 255, 0.85), transparent),
+                radial-gradient(1px 1px at 85% 55%, rgba(203, 232, 87, 0.65), transparent),
+                radial-gradient(1px 1px at 15% 75%, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(1.5px 1.5px at 35% 90%, rgba(198, 141, 255, 0.7), transparent),
+                radial-gradient(1px 1px at 60% 80%, rgba(255, 255, 255, 0.75), transparent),
+                radial-gradient(1px 1px at 90% 90%, rgba(203, 232, 87, 0.6), transparent),
+                radial-gradient(1px 1px at 48% 5%, rgba(255, 255, 255, 0.65), transparent),
+                radial-gradient(1.5px 1.5px at 78% 45%, rgba(198, 141, 255, 0.65), transparent);
+            background-size: 100% 100%;
+            animation: starfield-twinkle 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes starfield-twinkle {
+            0% { opacity: 0.55; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* Контент поверх звёздного фона */
+        nav,
+        #mobile-menu,
+        section,
+        footer,
+        #lightbox,
+        #sb-toast {
+            position: relative;
+            z-index: 1;
+        }
+
+        nav,
+        #mobile-menu {
+            z-index: 50;
+        }
+
+        #lightbox {
+            z-index: 100;
         }
 
         @font-face {
@@ -237,7 +312,7 @@
             /* слегка сдвинуть блок влево */
             transform: translateX(-1.25rem);
             /* резерв высоты под лягушку (absolute), чтобы не наезжала на портфолио */
-            padding-bottom: 10rem;
+            padding-bottom: 8.5rem;
         }
         .hero-frame-box {
             position: relative;
@@ -283,7 +358,7 @@
             .hero-framed-block {
                 max-width: 52rem;
                 transform: translateX(-1.75rem);
-                padding-bottom: 11rem;
+                padding-bottom: 9.5rem;
             }
             .hero-frame-inner {
                 padding: 0 3rem 2.2rem 3.2rem;
@@ -356,7 +431,9 @@
             border-radius: 50%;
             width: 52px;
             height: 52px;
-            font-size: 26px;
+            padding: 0;
+            margin: 0;
+            font-size: 28px;
             line-height: 1;
             cursor: pointer;
             display: flex;
@@ -366,17 +443,39 @@
             z-index: 110;
             user-select: none;
             pointer-events: auto !important;
+            box-sizing: border-box;
+        }
+        .lightbox-btn svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+            flex-shrink: 0;
         }
         .lightbox-btn:hover {
             background: var(--tuch-lime);
             color: var(--tuch-dark);
+        }
+        #lightbox-close {
+            top: 20px;
+            right: 20px;
+        }
+        #lightbox-close:hover {
             transform: scale(1.08);
         }
-        #lightbox-close { top: 20px; right: 20px; }
-        #lightbox-prev { left: 16px; top: 50%; transform: translateY(-50%); }
-        #lightbox-next { right: 16px; top: 50%; transform: translateY(-50%); }
-        #lightbox-prev:hover { transform: translateY(-50%) scale(1.08); }
-        #lightbox-next:hover { transform: translateY(-50%) scale(1.08); }
+        #lightbox-prev {
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #lightbox-next {
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #lightbox-prev:hover,
+        #lightbox-next:hover {
+            transform: translateY(-50%) scale(1.08);
+        }
         #lightbox-counter {
             position: absolute;
             bottom: 20px;
@@ -393,6 +492,7 @@
         }
         @media (max-width: 640px) {
             .lightbox-btn { width: 44px; height: 44px; font-size: 22px; }
+            .lightbox-btn svg { width: 18px; height: 18px; }
             #lightbox-prev { left: 8px; }
             #lightbox-next { right: 8px; }
         }
@@ -545,7 +645,7 @@
     </div>
 
     <!-- Hero Section -->
-    <section id="hero" class="pt-40 pb-20 px-6 text-center relative overflow-hidden">
+    <section id="hero" class="pt-40 pb-6 px-6 text-center relative overflow-hidden">
         <!-- Decorative stars -->
         <svg class="star-burst top-20 left-10 twinkle" width="40" height="40" viewBox="0 0 40 40" fill="none">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#CBE857"/>
@@ -584,7 +684,7 @@
     </section>
 
     <!-- Portfolio Section -->
-    <section id="portfolio" class="py-20 px-6 bg-opacity-50 relative">
+    <section id="portfolio" class="pt-4 pb-20 px-6 bg-opacity-50 relative">
         <svg class="star-burst top-10 right-10 twinkle" width="35" height="35" viewBox="0 0 40 40" fill="none" style="animation-delay:0.3s">
             <path d="M20 0L23.5 16.5L40 20L23.5 23.5L20 40L16.5 23.5L0 20L16.5 16.5L20 0Z" fill="#C68DFF"/>
         </svg>
@@ -682,10 +782,22 @@
 
     <!-- Lightbox -->
     <div id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения">
-        <button id="lightbox-close" class="lightbox-btn" aria-label="Закрыть" onclick="closeLightbox()">&times;</button>
-        <button id="lightbox-prev" class="lightbox-btn" aria-label="Предыдущая" onclick="event.stopPropagation(); lightboxStep(-1)">&#8249;</button>
+        <button id="lightbox-close" class="lightbox-btn" aria-label="Закрыть" onclick="closeLightbox()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+        </button>
+        <button id="lightbox-prev" class="lightbox-btn" aria-label="Предыдущая" onclick="event.stopPropagation(); lightboxStep(-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6"/>
+            </svg>
+        </button>
         <img id="lightbox-img" src="" alt="Работа" draggable="false">
-        <button id="lightbox-next" class="lightbox-btn" aria-label="Следующая" onclick="event.stopPropagation(); lightboxStep(1)">&#8250;</button>
+        <button id="lightbox-next" class="lightbox-btn" aria-label="Следующая" onclick="event.stopPropagation(); lightboxStep(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 6l6 6-6 6"/>
+            </svg>
+        </button>
         <div id="lightbox-counter"></div>
     </div>
 
@@ -804,7 +916,7 @@
             <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="mailto:tychencya779@gmail.com" class="underline hover:text-[#CBE857] transition">tychencya779@gmail.com</a>
+                <a href="/cdn-cgi/l/email-protection#394d405a515c575a40580e0e00795e54585055175a5654" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="2155584249444f42584016161861464c40484d0f424e4c">[email&#160;protected]</span></a>
             </div>
         </div>
     </section>
