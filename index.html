@@ -225,8 +225,10 @@
             position: relative;
             display: block;
             width: 100%;
-            max-width: 42rem;
+            max-width: 48rem; /* чуть шире */
             margin: 0 auto;
+            /* слегка сдвинуть блок влево */
+            transform: translateX(-1.25rem);
             /* резерв высоты под лягушку (absolute), чтобы не наезжала на портфолио */
             padding-bottom: 10rem;
         }
@@ -237,15 +239,19 @@
         .hero-frame-inner {
             position: relative;
             z-index: 1;
-            /* верх рамки на уровне заголовка «ТВОРЧЕСКАЯ СТУДИЯ» */
-            padding: 0.15rem 2.2rem 1.8rem 2.4rem;
+            /* верх рамки на уровне текста «ТВОРЧЕСКАЯ СТУДИЯ» */
+            padding: 0 2.4rem 1.9rem 2.6rem;
             text-align: center;
         }
         .hero-frame-border {
             position: absolute;
-            inset: 0;
+            /* чуть ниже верхнего края блока — верхняя линия на уровне текста */
+            top: 4px;
+            left: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
-            height: 100%;
+            height: auto;
             object-fit: fill;
             pointer-events: none;
             z-index: 2;
@@ -268,13 +274,23 @@
         }
         @media (min-width: 768px) {
             .hero-framed-block {
+                max-width: 52rem;
+                transform: translateX(-1.75rem);
                 padding-bottom: 11rem;
             }
             .hero-frame-inner {
-                padding: 0.2rem 2.8rem 2.1rem 3rem;
+                padding: 0 3rem 2.2rem 3.2rem;
+            }
+            .hero-frame-border {
+                top: 8px;
             }
             .hero-frog img {
                 width: 10rem;
+            }
+        }
+        @media (max-width: 640px) {
+            .hero-framed-block {
+                transform: translateX(-0.5rem);
             }
         }
 
@@ -781,7 +797,7 @@
             <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="mailto:tychencya779@gmail.com" class="underline hover:text-[#CBE857] transition">tychencya779@gmail.com</a>
+                <a href="/cdn-cgi/l/email-protection#691d100a010c070a10085e5e50290e04080005470a0604" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="34404d575c515a574d5503030d745359555d581a575b59">[email&#160;protected]</span></a>
             </div>
         </div>
     </section>
@@ -792,7 +808,7 @@
         </svg>
         <p>&copy; 2026 Тученция. Создано с любовью к искусству.</p>
     </footer>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         
         // ========== SUPABASE INTEGRATION FOR ТУЧЕНЦИЯ ==========
         const SUPABASE_URL = "https://lwzvgeeigqfvmatlihms.supabase.co";
@@ -1231,6 +1247,7 @@
             } else {
                 if (confirm('Выйти из режима администратора?')) {
                     isAdmin = false;
+        = false;
                     localStorage.removeItem('t_isAdmin');
                     // Reset reorder mode when leaving admin
                     reorderMode = null;
@@ -2003,5 +2020,5 @@
 
         window.onload = initSite;
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18f5d02b8aff3b2',t:'MTc4MzY4NDM1Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18f7c7ccbe5f129',t:'MTc4MzY4NTY0Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
