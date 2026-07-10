@@ -213,6 +213,13 @@
             color: var(--tuch-dark) !important;
         }
 
+        /* Зелёная линия под кнопками фильтров портфолио */
+        #port-filters {
+            border-bottom: 2px solid var(--tuch-lime);
+            padding-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(203, 232, 87, 0.15);
+        }
+
         @keyframes float {
             0%, 100% { transform: translate3d(0, 0, 0); }
             50% { transform: translate3d(0, -10px, 0); }
@@ -797,7 +804,7 @@
             <p id="contact-desc" data-edit-id="contact-p" class="text-xl mb-8 opacity-90">Все вопросы, заказы и предложения — пишите! Буду рада сотрудничеству.</p>
             <div class="flex flex-col gap-3 text-lg">
                 <a href="https://t.me/tychenciya" target="_blank" class="underline hover:text-[#CBE857] transition">t.me/tychenciya</a>
-                <a href="mailto:tychencya779@gmail.com" class="underline hover:text-[#CBE857] transition">tychencya779@gmail.com</a>
+                <a href="/cdn-cgi/l/email-protection#2a5e5349424f4449534b1d1d136a4d474b434604494547" class="underline hover:text-[#CBE857] transition"><span class="__cf_email__" data-cfemail="483c312b202d262b31297f7f71082f25292124662b2725">[email&#160;protected]</span></a>
             </div>
         </div>
     </section>
@@ -1247,7 +1254,6 @@
             } else {
                 if (confirm('Выйти из режима администратора?')) {
                     isAdmin = false;
-        = false;
                     localStorage.removeItem('t_isAdmin');
                     // Reset reorder mode when leaving admin
                     reorderMode = null;
@@ -2020,5 +2026,5 @@
 
         window.onload = initSite;
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18f7c7ccbe5f129',t:'MTc4MzY4NTY0Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
