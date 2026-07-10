@@ -220,6 +220,64 @@
         .float-anim { animation: float 3s ease-in-out infinite; will-change: transform; }
         .float-anim-delay { animation: float 3s ease-in-out 1.5s infinite; will-change: transform; }
 
+        /* Рамка hero: текст + лягушка под рамкой слева */
+        .hero-framed-block {
+            position: relative;
+            display: block;
+            width: 100%;
+            max-width: 42rem;
+            margin: 0 auto;
+            /* резерв высоты под лягушку (absolute), чтобы не наезжала на портфолио */
+            padding-bottom: 10rem;
+        }
+        .hero-frame-box {
+            position: relative;
+            width: 100%;
+        }
+        .hero-frame-inner {
+            position: relative;
+            z-index: 1;
+            /* верх рамки на уровне заголовка «ТВОРЧЕСКАЯ СТУДИЯ» */
+            padding: 0.15rem 2.2rem 1.8rem 2.4rem;
+            text-align: center;
+        }
+        .hero-frame-border {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            pointer-events: none;
+            z-index: 2;
+            user-select: none;
+        }
+        /* верх лягушки касается нижней границы рамки, слева */
+        .hero-frog {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            z-index: 3;
+            line-height: 0;
+        }
+        .hero-frog img {
+            width: 9rem;
+            max-width: 36vw;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35));
+        }
+        @media (min-width: 768px) {
+            .hero-framed-block {
+                padding-bottom: 11rem;
+            }
+            .hero-frame-inner {
+                padding: 0.2rem 2.8rem 2.1rem 3rem;
+            }
+            .hero-frog img {
+                width: 10rem;
+            }
+        }
+
         @keyframes twinkle {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.6; transform: scale(0.85); }
@@ -487,14 +545,28 @@
                 </div>
             </div>
 
-            <h1 id="hero-title" data-edit-id="hero-h1" class="font-marker text-6xl md:text-8xl text-[#CBE857] mb-4">ТУЧЕНЦИЯ</h1>
-            <h2 id="hero-subtitle" data-edit-id="hero-h2" class="text-2xl md:text-3xl mb-8 opacity-90">ТВОРЧЕСКАЯ СТУДИЯ</h2>
-            <p id="hero-desc" data-edit-id="hero-p" class="text-xl max-w-2xl mx-auto mb-10 font-light">Розалия — художник и дизайнер. Создаю иллюстрации, акварельные работы и цифровой дизайн для брендов и вдохновения.</p>
-        </div>
+            <h1 id="hero-title" data-edit-id="hero-h1" class="font-marker text-6xl md:text-8xl text-[#CBE857] mb-8">ТУЧЕНЦИЯ</h1>
 
-        <!-- Frog on swing -->
-        <div class="absolute bottom-10 left-6 md:left-16 float-anim">
-            <img src="https://i.ibb.co/1t881GSL/res-25.png" alt="Лягушка на качелях" class="w-36 md:w-40 h-auto drop-shadow-lg" loading="eager" width="160">
+            <!-- Текст в рамке + лягушка под рамкой слева -->
+            <div class="hero-framed-block">
+                <div class="hero-frame-box">
+                    <img
+                        class="hero-frame-border"
+                        src="data:image/png;base64,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"
+                        alt=""
+                        aria-hidden="true"
+                        draggable="false"
+                    >
+                    <div class="hero-frame-inner">
+                        <h2 id="hero-subtitle" data-edit-id="hero-h2" class="text-2xl md:text-3xl mb-4 opacity-90 tracking-wide">ТВОРЧЕСКАЯ СТУДИЯ</h2>
+                        <p id="hero-desc" data-edit-id="hero-p" class="text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">Розалия — художник и дизайнер. Создаю иллюстрации, акварельные работы и цифровой дизайн для брендов и вдохновения.</p>
+                    </div>
+                    <!-- верх лягушки касается нижней границы рамки, с левой стороны -->
+                    <div class="hero-frog float-anim">
+                        <img src="https://i.ibb.co/1t881GSL/res-25.png" alt="Лягушка на качелях" loading="eager" width="160">
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1941,5 +2013,5 @@
 
         window.onload = initSite;
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a18f58545f55f3b2',t:'MTc4MzY4NDE2NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
