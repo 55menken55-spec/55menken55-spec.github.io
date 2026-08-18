@@ -61,7 +61,10 @@
         }
 
         let currentFilter = 'all';
-        let shownCount = 6;
+        // Изначально показываем только обложки категорий (по одной фото на категорию).
+        // Остальные работы появляются после нажатия «Показать ещё» (+6 за раз)
+        // или выбора конкретного фильтра-категории.
+        let shownCount = 0;
 
         // ---------- SUPABASE DATA LAYER ----------
         async function loadPortfolioFromSupabase(){
