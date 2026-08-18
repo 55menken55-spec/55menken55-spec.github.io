@@ -3,7 +3,13 @@
         const SUPABASE_URL = "https://lwzvgeeigqfvmatlihms.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_E7IyfHDCfN_ozCsrLZVcYQ_eZSXSeOe";
         const BUCKET = "artworks";
-        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Если CDN Supabase не загрузился (блокировка сети/файрвол) — не роняем
+        // весь скрипт: заглушка бросает ошибку внутри вызовов, их try/catch
+        // перехватит, и сайт отрисуется из локального fallback.
+        const sbCdnMissing = () => { throw new Error('Supabase CDN не загружен'); };
+        const sb = (window.supabase && typeof window.supabase.createClient === 'function')
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            : { from: sbCdnMissing, storage: { from: sbCdnMissing } };
 
         // fallback local data (если Supabase пустой – покажем демо)
         const defaultPortfolioItems = [

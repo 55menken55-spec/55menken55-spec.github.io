@@ -79,8 +79,6 @@
         }
 
         /* Контент поверх звёздного фона */
-        nav,
-        #mobile-menu,
         section,
         footer,
         #lightbox,
@@ -89,20 +87,99 @@
             z-index: 1;
         }
 
-        nav,
-        #mobile-menu {
+        /* ===== Шапка и бургер-меню: самодостаточные стили =====
+           Всё критичное для работы меню задано здесь (ID-селекторы
+           перекрывают классы Tailwind), поэтому кнопка и меню работают,
+           даже если CDN Tailwind не загрузился. */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            box-sizing: border-box;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Mobile menu state is deliberately not dependent on Tailwind's runtime CDN. */
+        #menu-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--tuch-lime);
+        }
+        #menu-btn .menu-icon-line {
+            display: block;
+            width: 32px;
+            height: 2px;
+            background-color: var(--tuch-lime);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        #mobile-menu {
+            position: fixed;
+            top: 88px; /* высота шапки: padding 24px*2 + кнопка 40px */
+            left: 0;
+            width: 100%;
+            z-index: 49;
+            background: rgba(50, 56, 67, 0.96);
+            border-bottom: 2px solid rgba(203, 232, 87, 0.6);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transform: translateY(-12px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+        }
+        /* Открытое состояние меню */
         #mobile-menu.is-open {
             transform: translateY(0);
             opacity: 1;
+            visibility: visible;
             pointer-events: auto;
         }
-        #menu-btn .menu-icon-line {
-            transition: transform 0.3s ease, opacity 0.3s ease;
+        #mobile-menu .menu-list {
+            max-width: 72rem;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            column-gap: 28px;
+            row-gap: 10px;
         }
+        #mobile-menu .menu-link {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        #mobile-menu .menu-link:hover {
+            color: var(--tuch-lime);
+        }
+
+        /* Анимация бургер-иконки в «крестик» */
         #menu-btn.is-open .menu-icon-line:nth-child(1) {
             transform: translateY(8px) rotate(45deg);
         }
