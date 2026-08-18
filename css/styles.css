@@ -272,15 +272,13 @@
         .float-anim { animation: float 3s ease-in-out infinite; will-change: transform; }
         .float-anim-delay { animation: float 3s ease-in-out 1.5s infinite; will-change: transform; }
 
-        /* Рамка hero: текст + лягушка под рамкой слева */
+        /* Рамка hero: уголки тянутся вместе с текстом, лягушка под рамкой слева */
         .hero-framed-block {
             position: relative;
             display: block;
             width: 100%;
-            max-width: 48rem; /* чуть шире */
+            max-width: 48rem;
             margin: 0 auto;
-            /* слегка сдвинуть блок влево */
-            transform: translateX(-1.25rem);
             /* резерв высоты под лягушку (absolute), чтобы не наезжала на портфолио */
             padding-bottom: 8.5rem;
         }
@@ -291,23 +289,43 @@
         .hero-frame-inner {
             position: relative;
             z-index: 1;
-            /* верх рамки на уровне текста «ТВОРЧЕСКАЯ СТУДИЯ» */
-            padding: 0 2.4rem 1.9rem 2.6rem;
+            padding: 0.7rem 2.2rem 1.7rem 1.9rem;
             text-align: center;
         }
-        .hero-frame-border {
+        .hero-frame-deco {
             position: absolute;
-            /* чуть ниже верхнего края блока — верхняя линия на уровне текста */
-            top: 4px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: auto;
-            object-fit: fill;
+            inset: 0;
             pointer-events: none;
             z-index: 2;
-            user-select: none;
+        }
+        .hero-frame-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 34%;
+            border: 3.5px solid var(--tuch-lime);
+            border-right: 0;
+            box-sizing: border-box;
+        }
+        .hero-frame-right {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 22%;
+            height: 2.55rem;
+            border-right: 3.5px solid var(--tuch-lime);
+            border-bottom: 3.5px solid var(--tuch-lime);
+            box-sizing: border-box;
+        }
+        .hero-frame-star {
+            position: absolute;
+            top: -15px;
+            right: -9px;
+            width: 16px;
+            height: 16px;
+            fill: var(--tuch-lime);
+            display: block;
         }
         /* верх лягушки касается нижней границы рамки, слева */
         .hero-frog {
@@ -327,22 +345,60 @@
         @media (min-width: 768px) {
             .hero-framed-block {
                 max-width: 52rem;
-                transform: translateX(-1.75rem);
                 padding-bottom: 9.5rem;
             }
             .hero-frame-inner {
-                padding: 0 3rem 2.2rem 3.2rem;
+                padding: 0.85rem 3rem 2.1rem 2.6rem;
             }
-            .hero-frame-border {
-                top: 8px;
+            .hero-frame-left {
+                width: 30%;
+            }
+            .hero-frame-right {
+                width: 18%;
+                height: 2.75rem;
             }
             .hero-frog img {
                 width: 10rem;
             }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 767px) {
+            #hero {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
             .hero-framed-block {
-                transform: translateX(-0.5rem);
+                max-width: 100%;
+                padding-bottom: 8.75rem;
+            }
+            .hero-frame-inner {
+                padding: 0.65rem 1.2rem 1.35rem 1.15rem;
+            }
+            .hero-frame-left {
+                width: 48%;
+                border-width: 3px 0 3px 3px;
+            }
+            .hero-frame-right {
+                width: 30%;
+                height: 2.15rem;
+                border-right-width: 3px;
+                border-bottom-width: 3px;
+            }
+            .hero-frame-star {
+                width: 14px;
+                height: 14px;
+                top: -13px;
+                right: -8px;
+            }
+            #hero-subtitle {
+                overflow-wrap: break-word;
+            }
+        }
+        @media (max-width: 380px) {
+            .hero-frame-inner {
+                padding: 0.55rem 0.95rem 1.15rem 0.9rem;
+            }
+            #hero-subtitle {
+                letter-spacing: 0.04em;
             }
         }
 
