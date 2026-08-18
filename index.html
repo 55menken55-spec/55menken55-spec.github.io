@@ -38,10 +38,10 @@
             <span id="admin-indicator" class="hidden admin-badge">РЕЖИМ АДМИНА</span>
         </div>
         <!-- Hamburger button -->
-        <button id="menu-btn" class="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 focus:outline-none" aria-label="Открыть меню">
-            <span class="block w-8 h-0.5 bg-[#CBE857] transition-all duration-300 origin-center"></span>
-            <span class="block w-8 h-0.5 bg-[#CBE857] transition-all duration-300"></span>
-            <span class="block w-8 h-0.5 bg-[#CBE857] transition-all duration-300 origin-center"></span>
+        <button id="menu-btn" type="button" class="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 focus:outline-none" aria-label="Открыть меню" aria-controls="mobile-menu" aria-expanded="false">
+            <span class="menu-icon-line block w-8 h-0.5 bg-[#CBE857] transition-all duration-300 origin-center"></span>
+            <span class="menu-icon-line block w-8 h-0.5 bg-[#CBE857] transition-all duration-300"></span>
+            <span class="menu-icon-line block w-8 h-0.5 bg-[#CBE857] transition-all duration-300 origin-center"></span>
         </button>
     </nav>
 
@@ -55,6 +55,34 @@
             <a href="#contact" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Контакты</a>
         </div>
     </div>
+
+    <!-- Navigation works independently of optional third-party scripts. -->
+    <script>
+        (function () {
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!menuBtn || !mobileMenu) return;
+
+            const setMenuOpen = (open) => {
+                mobileMenu.classList.toggle('is-open', open);
+                menuBtn.classList.toggle('is-open', open);
+                menuBtn.setAttribute('aria-expanded', String(open));
+                menuBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+            };
+
+            menuBtn.addEventListener('click', () => {
+                setMenuOpen(!mobileMenu.classList.contains('is-open'));
+            });
+
+            mobileMenu.querySelectorAll('.menu-link').forEach((link) => {
+                link.addEventListener('click', () => setMenuOpen(false));
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') setMenuOpen(false);
+            });
+        }());
+    </script>
 
     <!-- Hero Section -->
     <section id="hero" class="pt-40 pb-6 px-6 text-center relative overflow-hidden">

@@ -94,6 +94,30 @@
             z-index: 50;
         }
 
+        /* Mobile menu state is deliberately not dependent on Tailwind's runtime CDN. */
+        #mobile-menu.is-open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #menu-btn .menu-icon-line {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        #menu-btn.is-open .menu-icon-line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        #menu-btn.is-open .menu-icon-line:nth-child(2) {
+            opacity: 0;
+        }
+        #menu-btn.is-open .menu-icon-line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+        #menu-btn:focus-visible {
+            outline: 2px solid var(--tuch-lime);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
         #lightbox {
             z-index: 100;
         }
