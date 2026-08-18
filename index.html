@@ -47,11 +47,12 @@
 
     <!-- Mobile/dropdown menu -->
     <div id="mobile-menu" class="fixed top-[88px] left-0 w-full z-40 bg-[#323843]/95 backdrop-blur-md border-b-2 border-[#CBE857]/60 shadow-lg -translate-y-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            <a href="#about" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Обо мне</a>
+        <div class="menu-list max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <a href="#hero" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Главная</a>
             <a href="#portfolio" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Портфолио</a>
             <a href="#services" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Услуги</a>
             <a href="#shop" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Магазин</a>
+            <a href="#about" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">О себе</a>
             <a href="#contact" class="menu-link text-lg font-bold uppercase tracking-wider text-white hover:text-[#CBE857] transition">Контакты</a>
         </div>
     </div>
@@ -70,12 +71,20 @@
                 menuBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
             };
 
-            menuBtn.addEventListener('click', () => {
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
                 setMenuOpen(!mobileMenu.classList.contains('is-open'));
             });
 
             mobileMenu.querySelectorAll('.menu-link').forEach((link) => {
                 link.addEventListener('click', () => setMenuOpen(false));
+            });
+
+            // Закрыть меню кликом в любой точке вне меню
+            document.addEventListener('click', (event) => {
+                if (!mobileMenu.classList.contains('is-open')) return;
+                if (mobileMenu.contains(event.target) || menuBtn.contains(event.target)) return;
+                setMenuOpen(false);
             });
 
             document.addEventListener('keydown', (event) => {
