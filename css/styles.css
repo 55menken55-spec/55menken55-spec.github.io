@@ -734,6 +734,26 @@
             position: relative;
             backdrop-filter: blur(4px);
         }
+        #wm-batch-bar {
+            display: none;
+            background: linear-gradient(135deg, rgba(203,232,87,0.15), rgba(198,141,255,0.15));
+            border: 2px solid var(--tuch-lime);
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+        #wm-batch-bar .reorder-hint {
+            font-size: 13px;
+            color: rgba(255,255,255,0.85);
+            margin-top: 6px;
+        }
+        #wm-batch-bar .reorder-hint strong {
+            color: var(--tuch-lime);
+        }
+
         #reorder-bar .reorder-hint {
             font-size: 13px;
             color: rgba(255,255,255,0.85);
@@ -741,4 +761,86 @@
         }
         #reorder-bar .reorder-hint strong {
             color: #FFD700;
+        }
+
+        /* ===== Водяной знак «ТУЧЕНЦИЯ» на изображениях ===== */
+        :root {
+            --tuch-watermark: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22230%22%20height=%22130%22%20viewBox=%220%200%20230%20130%22%3E%3Cg%20transform=%22rotate(-24%20115%2065)%22%20font-family=%22%27Franklin%20Gothic%27,%27Arial%20Narrow%27,Arial,Helvetica,sans-serif%22%20font-size=%2221%22%20font-weight=%22700%22%20letter-spacing=%222.5%22%20text-anchor=%22middle%22%3E%3Ctext%20x=%22116%22%20y=%2271%22%20fill=%22%23000000%22%20fill-opacity=%220.32%22%3E%D0%A2%D0%A3%D0%A7%D0%95%D0%9D%D0%A6%D0%98%D0%AF%3C/text%3E%3Ctext%20x=%22115%22%20y=%2269%22%20fill=%22%23ffffff%22%20fill-opacity=%220.46%22%3E%D0%A2%D0%A3%D0%A7%D0%95%D0%9D%D0%A6%D0%98%D0%AF%3C/text%3E%3C/g%3E%3C/svg%3E");
+            --tuch-watermark-tile: 230px 130px;
+        }
+
+        .wm-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            user-select: none;
+            z-index: 2;
+            border-radius: inherit;
+            background-image: var(--tuch-watermark);
+            background-repeat: repeat;
+            background-size: var(--tuch-watermark-tile);
+            background-position: center;
+            opacity: 0.9;
+        }
+
+        /* Админ-панели поверх водяного знака */
+        .card-admin-overlay,
+        .shop-admin-overlay {
+            z-index: 5;
+        }
+
+        /* На маленьких карточках плитка чуть мельче, чтобы надпись читалась */
+        @media (max-width: 640px) {
+            .wm-overlay {
+                background-size: 170px 96px;
+            }
+        }
+
+        /* Водяной знак в лайтбоксе */
+        #lightbox-figure {
+            position: relative;
+            display: inline-flex;
+            line-height: 0;
+        }
+        #lightbox-figure .wm-overlay {
+            border-radius: 16px;
+            background-size: 300px 170px;
+        }
+        #lightbox-figure .wm-overlay.is-hidden {
+            display: none;
+        }
+
+        /* Подсказка в админ-панели про водяной знак */
+        .wm-toggle {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid rgba(203, 232, 87, 0.35);
+            border-radius: 12px;
+            background: rgba(203, 232, 87, 0.08);
+            cursor: pointer;
+        }
+        .wm-toggle input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--tuch-lime);
+            cursor: pointer;
+            flex: none;
+        }
+        .wm-toggle .wm-toggle-text {
+            font-size: 13px;
+            line-height: 1.35;
+        }
+        .wm-toggle .wm-toggle-title {
+            display: block;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--tuch-lime);
+            font-size: 12px;
+        }
+        .wm-toggle .wm-toggle-hint {
+            color: rgba(255, 255, 255, 0.65);
         }
