@@ -189,6 +189,15 @@
                     <input type="text" id="admin-new-url" placeholder="https://i.ibb.co/.../image.jpg" class="w-full bg-[#323843] border border-white/20 rounded-lg p-2 text-white focus:outline-none focus:border-[#CBE857]">
                 </div>
 
+                <!-- Watermark toggle -->
+                <label class="wm-toggle mb-4" for="wm-portfolio">
+                    <input type="checkbox" id="wm-portfolio" checked>
+                    <span class="wm-toggle-text">
+                        <span class="wm-toggle-title">Водяной знак «ТУЧЕНЦИЯ»</span>
+                        <span class="wm-toggle-hint">Если галочка стоит — надпись впечатывается прямо в файл перед загрузкой в Supabase. Снимите её, чтобы работа отображалась без водяного знака.</span>
+                    </span>
+                </label>
+
                 <!-- Loader Spinner -->
                 <div id="upload-loader-container" class="hidden items-center gap-2 mb-4 bg-[#CBE857]/10 p-3 rounded-lg border border-[#CBE857]/30 text-sm">
                     <div class="loader"></div>
@@ -209,6 +218,17 @@
                     <button id="btn-save-order" onclick="savePortfolioOrder()" class="btn-tuch px-4 py-1.5 text-xs font-bold uppercase bg-[#CBE857] text-[#323843] hover:bg-[#C68DFF] hover:text-white" style="display:none;">💾 Сохранить порядок</button>
                 </div>
                 <p id="reorder-hint" class="reorder-hint"></p>
+            </div>
+
+            <!-- ===== WATERMARK BAR (admin only) ===== -->
+            <div id="wm-batch-bar">
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <span class="text-sm font-bold text-[#CBE857] uppercase tracking-wider">© Водяной знак «ТУЧЕНЦИЯ»:</span>
+                    <button id="btn-burn-watermarks" onclick="burnWatermarksIntoExistingImages()" class="btn-tuch px-4 py-1.5 text-xs font-bold uppercase">🖼️ Впечатать в старые картинки</button>
+                </div>
+                <p class="reorder-hint">
+                    Сейчас на старых работах знак показывается <strong>слоем поверх картинки</strong>. Кнопка выше перезальёт их с надписью прямо в файле — тогда знак останется и при скачивании.
+                </p>
             </div>
             
             <div id="port-filters" class="flex flex-wrap justify-center gap-4 mb-12">
@@ -242,7 +262,10 @@
                 <path d="M15 6l-6 6 6 6"/>
             </svg>
         </button>
-        <img id="lightbox-img" src="" alt="Работа" draggable="false">
+        <div id="lightbox-figure">
+            <img id="lightbox-img" src="" alt="Работа" draggable="false">
+            <div id="lightbox-wm" class="wm-overlay is-hidden" aria-hidden="true"></div>
+        </div>
         <button id="lightbox-next" class="lightbox-btn" aria-label="Следующая" onclick="event.stopPropagation(); lightboxStep(1)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M9 6l6 6-6 6"/>
@@ -297,6 +320,13 @@
                     <label class="block text-sm mb-1 opacity-80">Фотография товара:</label>
                     <input type="file" id="shop-new-file" accept="image/*" class="w-full text-white/80 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#CBE857] file:text-[#323843] hover:file:bg-[#C68DFF] hover:file:text-white">
                 </div>
+                <label class="wm-toggle mb-4" for="wm-shop">
+                    <input type="checkbox" id="wm-shop" checked>
+                    <span class="wm-toggle-text">
+                        <span class="wm-toggle-title">Водяной знак «ТУЧЕНЦИЯ»</span>
+                        <span class="wm-toggle-hint">Надпись будет впечатана в фото товара перед загрузкой. Снимите галочку, если водяной знак не нужен.</span>
+                    </span>
+                </label>
                 <div class="flex justify-end">
                     <button onclick="addNewShopItem()" class="btn-tuch px-6 py-2 text-sm font-bold uppercase">Добавить в магазин</button>
                 </div>

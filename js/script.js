@@ -140,18 +140,152 @@
             }
         }
 
-        async function uploadFileToSupabase(file, folder='portfolio'){
+        /* ==========================================================
+           ВОДЯНОЙ ЗНАК «ТУЧЕНЦИЯ»
+           ----------------------------------------------------------
+           1) Старые картинки (загруженные до появления этой функции)
+              получают водяной знак поверх — CSS-слой .wm-overlay.
+           2) Новые файлы можно загружать с водяным знаком, впечатанным
+              прямо в пиксели (галочка в админ-панели). Такие файлы
+              помечаются префиксом в имени, чтобы не рисовать поверх
+              них второй знак.
+           3) Если админ снял галочку — картинка помечается как
+              «без знака» и показывается чистой.
+           ========================================================== */
+        const WATERMARK_TEXT = 'ТУЧЕНЦИЯ';
+        const WM_PREFIX_ON = 'tuchwm_';    // знак впечатан в файл
+        const WM_PREFIX_OFF = 'tuchnowm_'; // осознанно без знака
+
+        // 'burned' – знак уже в пикселях, 'off' – знак не нужен,
+        // 'legacy' – старая картинка, рисуем CSS-слой поверх.
+        function imageWatermarkState(url){
+            if(!url) return 'off';
+            const s = String(url);
+            if(s.includes(WM_PREFIX_OFF) || /#nowm\b/.test(s)) return 'off';
+            if(s.includes(WM_PREFIX_ON) || /#wm\b/.test(s)) return 'burned';
+            return 'legacy';
+        }
+        function needsWatermarkOverlay(url){
+            return imageWatermarkState(url) === 'legacy';
+        }
+        function watermarkOverlayHTML(url){
+            return needsWatermarkOverlay(url)
+                ? '<div class="wm-overlay" aria-hidden="true"></div>'
+                : '';
+        }
+        window.imageWatermarkState = imageWatermarkState;
+
+        function loadImageFromFile(file){
+            return new Promise((resolve, reject)=>{
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Не удалось прочитать изображение')); };
+                img.src = url;
+            });
+        }
+
+        // Рисуем диагональную «сетку» из надписи по всему холсту
+        function drawWatermarkPattern(ctx, w, h, text = WATERMARK_TEXT){
+            const fontSize = Math.max(14, Math.round(Math.min(w, h) * 0.055));
+            ctx.save();
+            ctx.font = `700 ${fontSize}px "Franklin Gothic", "Arial Narrow", Arial, Helvetica, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const textWidth = ctx.measureText(text).width;
+            const stepX = textWidth + fontSize * 2.4;
+            const stepY = fontSize * 3.6;
+            const diagonal = Math.sqrt(w * w + h * h);
+
+            ctx.translate(w / 2, h / 2);
+            ctx.rotate(-24 * Math.PI / 180);
+
+            ctx.shadowColor = 'rgba(0,0,0,0.35)';
+            ctx.shadowBlur = Math.max(2, fontSize * 0.12);
+            ctx.shadowOffsetY = Math.max(1, fontSize * 0.05);
+            ctx.fillStyle = 'rgba(255,255,255,0.42)';
+
+            for (let y = -diagonal / 2; y <= diagonal / 2; y += stepY) {
+                for (let x = -diagonal / 2; x <= diagonal / 2; x += stepX) {
+                    ctx.fillText(text, x, y);
+                }
+            }
+            ctx.restore();
+        }
+
+        // Ограничение размера холста (иначе Safari/iOS отдаёт пустую картинку)
+        const WM_MAX_SIDE = 4096;
+        const WM_MAX_PIXELS = 12e6;
+        function fitCanvasSize(w, h){
+            let scale = 1;
+            if (Math.max(w, h) > WM_MAX_SIDE) scale = WM_MAX_SIDE / Math.max(w, h);
+            if (w * h * scale * scale > WM_MAX_PIXELS) scale = Math.sqrt(WM_MAX_PIXELS / (w * h));
+            return {
+                width: Math.max(1, Math.round(w * scale)),
+                height: Math.max(1, Math.round(h * scale))
+            };
+        }
+
+        // Впечатываем водяной знак в файл (возвращаем новый File)
+        async function burnWatermarkIntoFile(file, text = WATERMARK_TEXT){
+            const img = await loadImageFromFile(file);
+            const srcW = img.naturalWidth || img.width;
+            const srcH = img.naturalHeight || img.height;
+            if(!srcW || !srcH) throw new Error('Пустое изображение');
+
+            const size = fitCanvasSize(srcW, srcH);
+            const canvas = document.createElement('canvas');
+            canvas.width = size.width;
+            canvas.height = size.height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            drawWatermarkPattern(ctx, canvas.width, canvas.height, text);
+
+            const keepAlpha = /png|webp/i.test(file.type || '');
+            const mime = keepAlpha ? 'image/png' : 'image/jpeg';
+            const blob = await new Promise((resolve, reject) => {
+                canvas.toBlob(b => b ? resolve(b) : reject(new Error('Не удалось обработать изображение')), mime, 0.92);
+            });
+
+            const baseName = (file.name || 'image').replace(/\.[^.]+$/, '');
+            const ext = keepAlpha ? 'png' : 'jpg';
+            return new File([blob], `${baseName}.${ext}`, { type: mime });
+        }
+        window.burnWatermarkIntoFile = burnWatermarkIntoFile;
+
+        // Помечаем «ручной» URL, если знак не нужен (фрагмент браузер игнорирует)
+        function markUrlWatermark(url, withWatermark){
+            const clean = String(url).replace(/#(no)?wm\b/g, '');
+            return withWatermark ? clean : clean + '#nowm';
+        }
+
+        async function uploadFileToSupabase(file, folder='portfolio', options={}){
             if(!file) return null;
-            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
-            const safe = file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-            const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2,8)}_${safe}`;
+            const withWatermark = options.watermark !== false;
             const loader = document.getElementById('upload-loader-container');
             if(loader){ loader.classList.remove('hidden'); loader.classList.add('flex'); }
             try{
-                const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file, {
+                let uploadFile = file;
+                if (withWatermark) {
+                    try{
+                        uploadFile = await burnWatermarkIntoFile(file);
+                    }catch(wmErr){
+                        console.error('watermark failed', wmErr);
+                        showToast('Не удалось наложить водяной знак: ' + wmErr.message, true);
+                        throw wmErr;
+                    }
+                }
+                const prefix = withWatermark ? WM_PREFIX_ON : WM_PREFIX_OFF;
+                const safe = uploadFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+                const path = `${folder}/${prefix}${Date.now()}_${Math.random().toString(36).slice(2,8)}_${safe}`;
+                const { error: upErr } = await sb.storage.from(BUCKET).upload(path, uploadFile, {
                     cacheControl: '3600',
                     upsert: false,
-                    contentType: file.type
+                    contentType: uploadFile.type
                 });
                 if(upErr) throw upErr;
                 const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
@@ -160,6 +294,85 @@
                 if(loader){ loader.classList.add('hidden'); loader.classList.remove('flex'); }
             }
         }
+
+        // Спросить про водяной знак там, где нет своей галочки (замена фото)
+        function askWatermark(question = 'Наложить водяной знак «ТУЧЕНЦИЯ» на это изображение?'){
+            return confirm(question + '\n\nОК — да, с водяным знаком.\nОтмена — загрузить без водяного знака.');
+        }
+
+        /* ===== Массовое «впечатывание» знака в уже загруженные картинки ===== */
+        async function fileFromUrl(url){
+            const clean = String(url).split('#')[0];
+            const res = await fetch(clean, { mode: 'cors', cache: 'no-cache' });
+            if(!res.ok) throw new Error('HTTP ' + res.status);
+            const blob = await res.blob();
+            if(!/^image\//.test(blob.type || '')) throw new Error('Это не изображение');
+            const name = (clean.split('/').pop() || 'image').split('?')[0];
+            return new File([blob], decodeURIComponent(name), { type: blob.type });
+        }
+
+        async function burnWatermarksIntoExistingImages(){
+            if(!isAdmin) return;
+
+            const targets = [];
+            portfolioItems.forEach((item, index) => {
+                if(item.img && needsWatermarkOverlay(item.img)) targets.push({ kind: 'portfolio', item, index });
+            });
+            shopItems.forEach((item, index) => {
+                if(item.img && needsWatermarkOverlay(item.img)) targets.push({ kind: 'shop', item, index });
+            });
+
+            if(!targets.length){
+                alert('Все картинки портфолио и магазина уже обработаны — водяной знак впечатан в файлы (или отключён вручную).');
+                return;
+            }
+
+            const ok = confirm(
+                `Впечатать водяной знак «${WATERMARK_TEXT}» в ${targets.length} картинок (портфолио и магазин)?\n\n` +
+                'Картинки будут перезалиты в Supabase Storage уже с надписью, старые файлы останутся в хранилище нетронутыми.\n' +
+                'Это может занять несколько минут — не закрывайте вкладку.'
+            );
+            if(!ok) return;
+
+            const btn = document.getElementById('btn-burn-watermarks');
+            const originalLabel = btn ? btn.innerHTML : '';
+            if(btn){ btn.disabled = true; btn.style.opacity = '0.7'; }
+
+            let done = 0, failed = 0;
+            for (let i = 0; i < targets.length; i++){
+                const t = targets[i];
+                if(btn) btn.innerHTML = `⏳ Обработка ${i + 1} / ${targets.length}...`;
+                try{
+                    const file = await fileFromUrl(t.item.img);
+                    const newUrl = await uploadFileToSupabase(file, t.kind, { watermark: true });
+                    if(!newUrl) throw new Error('Загрузка не удалась');
+
+                    const isRemote = t.item.id && !String(t.item.id).startsWith('local-');
+                    if(isRemote){
+                        const { error } = await sb.from(t.kind === 'shop' ? 'shop' : 'portfolio')
+                          .update({ image_url: newUrl }).eq('id', t.item.id);
+                        if(error) throw error;
+                    }
+                    t.item.img = newUrl;
+                    done++;
+                }catch(e){
+                    console.warn('watermark batch failed for', t.item.img, e);
+                    failed++;
+                }
+            }
+
+            localStorage.setItem('t_portfolio', JSON.stringify(portfolioItems));
+            localStorage.setItem('t_shop', JSON.stringify(shopItems));
+
+            if(btn){ btn.disabled = false; btn.style.opacity = ''; btn.innerHTML = originalLabel; }
+
+            showToast(`Готово: обработано ${done}` + (failed ? `, не удалось ${failed}` : ''), failed > 0);
+            if(failed){
+                alert(`Обработано: ${done}\nНе удалось: ${failed}\n\nОбычно причина — картинка лежит на стороннем хостинге, который запрещает её читать из браузера. Такие работы проще перезалить вручную кнопкой «Заменить».`);
+            }
+            await initSite();
+        }
+        window.burnWatermarksIntoExistingImages = burnWatermarksIntoExistingImages;
 
         function showToast(msg, isErr){
             let t = document.getElementById('sb-toast');
@@ -342,6 +555,7 @@
             const loadingStrategy = isFirstScreen ? 'eager' : 'lazy';
             const imgSrc = item.img || item.image_url || '';
             let html = `<img src="${imgSrc}" class="w-full h-full object-cover" loading="${loadingStrategy}" width="280" height="280" alt="${item.category} - Работа Розалии" draggable="false">`;
+            html += watermarkOverlayHTML(imgSrc);
 
             // Admin overlay (Заменить / Удалить)
             if (isAdmin) {
@@ -372,12 +586,13 @@
                 
                 let html = `
                     <div class="relative group aspect-square overflow-hidden rounded-lg mb-4">
-                        <img src="${item.img}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" width="300" height="300">
+                        <img src="${item.img}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" width="300" height="300" alt="${item.name}" draggable="false">
+                        ${watermarkOverlayHTML(item.img)}
                 `;
 
                 if (isAdmin) {
                     html += `
-                        <div class="absolute inset-0 bg-black/85 flex flex-col justify-center items-center p-3 opacity-0 hover:opacity-100 transition-opacity duration-150">
+                        <div class="shop-admin-overlay absolute inset-0 bg-black/85 flex flex-col justify-center items-center p-3 opacity-0 hover:opacity-100 transition-opacity duration-150">
                             <button onclick="triggerReplaceShopImage(${index})" class="bg-[#CBE857] text-[#323843] hover:scale-105 transition font-bold px-4 py-2 rounded-full text-xs uppercase mb-2">Заменить фото</button>
                             <button onclick="deleteShopItem(${index})" class="bg-red-500 text-white hover:scale-105 transition font-bold px-4 py-2 rounded-full text-xs uppercase">Удалить товар</button>
                         </div>
@@ -465,6 +680,7 @@
             const secretStar = document.getElementById('admin-secret-star');
             const aboutOverlay = document.getElementById('about-admin-overlay');
             const reorderBar = document.getElementById('reorder-bar');
+            const wmBar = document.getElementById('wm-batch-bar');
 
             if (isAdmin) {
                 if(uploadPanel) uploadPanel.classList.remove('hidden');
@@ -472,6 +688,7 @@
                 if(indicator) indicator.classList.remove('hidden');
                 if(secretStar) secretStar.setAttribute('fill', '#CBE857');
                 if(reorderBar) reorderBar.style.display = 'block';
+                if(wmBar) wmBar.style.display = 'block';
                 enableTextEditing(true);
                 
                 if (aboutOverlay) {
@@ -483,6 +700,7 @@
                 if(indicator) indicator.classList.add('hidden');
                 if(secretStar) secretStar.setAttribute('fill', '#C68DFF');
                 if(reorderBar) reorderBar.style.display = 'none';
+                if(wmBar) wmBar.style.display = 'none';
                 enableTextEditing(false);
 
                 if (aboutOverlay) {
@@ -570,6 +788,8 @@
             const category = catEl ? catEl.value : 'Иллюстрация';
             const methodEl = document.getElementById('upload-method');
             const method = methodEl ? methodEl.value : 'file';
+            const wmEl = document.getElementById('wm-portfolio');
+            const withWatermark = wmEl ? wmEl.checked : true;
 
             try{
                 let imageUrl = null;
@@ -577,7 +797,8 @@
                     const urlEl = document.getElementById('admin-new-url');
                     const url = urlEl ? urlEl.value.trim() : '';
                     if (!url) { alert('Пожалуйста, введите URL изображения!'); return; }
-                    imageUrl = url;
+                    // Чужой файл перезаписать нельзя — знак рисуется поверх на сайте
+                    imageUrl = markUrlWatermark(url, withWatermark);
                 } else {
                     const fileInput = document.getElementById('admin-new-file');
                     if (!fileInput || fileInput.files.length === 0) {
@@ -585,7 +806,7 @@
                         return;
                     }
                     const file = fileInput.files[0];
-                    imageUrl = await uploadFileToSupabase(file, 'portfolio');
+                    imageUrl = await uploadFileToSupabase(file, 'portfolio', { watermark: withWatermark });
                     if(fileInput) fileInput.value='';
                 }
                 if(!imageUrl) throw new Error('Нет URL изображения');
@@ -612,7 +833,7 @@
                     data = retry.data; error = retry.error;
                 }
                 if(error) throw error;
-                showToast('Добавлено в Supabase ✓');
+                showToast(withWatermark ? 'Добавлено с водяным знаком ✓' : 'Добавлено без водяного знака ✓');
                 const urlInput = document.getElementById('admin-new-url');
                 if(urlInput) urlInput.value='';
                 await initSite();
@@ -634,9 +855,12 @@
             if (!name || !price) { alert('Пожалуйста, заполните название и цену товара!'); return; }
             if (!fileInput || fileInput.files.length === 0) { alert('Пожалуйста, выберите фотографию товара!'); return; }
 
+            const wmEl = document.getElementById('wm-shop');
+            const withWatermark = wmEl ? wmEl.checked : true;
+
             try{
                 const file = fileInput.files[0];
-                const uploadedUrl = await uploadFileToSupabase(file, 'shop');
+                const uploadedUrl = await uploadFileToSupabase(file, 'shop', { watermark: withWatermark });
                 if(!uploadedUrl) throw new Error('Загрузка не удалась');
 
                 const priceNum = parseFloat(price.replace(/[^\d.]/g,''));
@@ -650,7 +874,7 @@
                 const { error } = await sb.from('shop').insert(payload);
                 if(error) throw error;
 
-                showToast('Товар добавлен в Supabase');
+                showToast(withWatermark ? 'Товар добавлен (с водяным знаком) ✓' : 'Товар добавлен (без водяного знака) ✓');
                 if(nameEl) nameEl.value='';
                 if(priceEl) priceEl.value='';
                 fileInput.value='';
@@ -670,7 +894,7 @@
                 const marker = `/object/public/${BUCKET}/`;
                 const i = url.indexOf(marker);
                 if(i === -1) return null;
-                return decodeURIComponent(url.substring(i + marker.length).split('?')[0]);
+                return decodeURIComponent(url.substring(i + marker.length).split('?')[0].split('#')[0]);
             }catch(e){ return null; }
         }
         async function deleteStorageFileByUrl(url){
@@ -751,8 +975,9 @@
                 if (replaceTargetIndex === null || e.target.files.length === 0) return;
                 const file = e.target.files[0];
                 const item = portfolioItems[replaceTargetIndex];
+                const withWatermark = askWatermark('Наложить водяной знак «ТУЧЕНЦИЯ» на новую картинку портфолио?');
                 try{
-                    const uploadedUrl = await uploadFileToSupabase(file, 'portfolio');
+                    const uploadedUrl = await uploadFileToSupabase(file, 'portfolio', { watermark: withWatermark });
                     if(!uploadedUrl) throw new Error('upload failed');
                     if(item && item.id && !String(item.id).startsWith('local-')){
                         const { error } = await sb.from('portfolio').update({ image_url: uploadedUrl }).eq('id', item.id);
@@ -779,8 +1004,9 @@
                 if (replaceShopTargetIndex === null || e.target.files.length === 0) return;
                 const file = e.target.files[0];
                 const item = shopItems[replaceShopTargetIndex];
+                const withWatermark = askWatermark('Наложить водяной знак «ТУЧЕНЦИЯ» на новое фото товара?');
                 try{
-                    const uploadedUrl = await uploadFileToSupabase(file, 'shop');
+                    const uploadedUrl = await uploadFileToSupabase(file, 'shop', { watermark: withWatermark });
                     if(item && item.id && !String(item.id).startsWith('local-')){
                         const { error } = await sb.from('shop').update({ image_url: uploadedUrl }).eq('id', item.id);
                         if(error) throw error;
@@ -804,7 +1030,7 @@
                 if (e.target.files.length === 0) return;
                 const file = e.target.files[0];
                 try{
-                    const uploadedUrl = await uploadFileToSupabase(file, 'about');
+                    const uploadedUrl = await uploadFileToSupabase(file, 'about', { watermark: false });
                     try{
                         const { data: oldAv } = await sb.from('site_settings').select('value').eq('key','about_avatar_url').maybeSingle();
                         if(oldAv?.value && oldAv.value !== uploadedUrl){
@@ -1104,19 +1330,24 @@
         const lightboxCounter = document.getElementById('lightbox-counter');
         let lightboxList = [];
         let lightboxIndex = 0;
+        // Водяной знак в лайтбоксе нужен только для работ портфолио и магазина
+        let lightboxWatermarkContext = false;
 
         function getVisibleImagesInContext(currentSrc) {
             const list = [];
             const isInPortfolio = Array.from(document.querySelectorAll('#port-grid img')).some(img => img.src === currentSrc);
             if (isInPortfolio) {
                 document.querySelectorAll('#port-grid img').forEach(img => { list.push(img.src); });
+                lightboxWatermarkContext = true;
                 return list;
             }
             const isInShop = Array.from(document.querySelectorAll('#shop-grid img')).some(img => img.src === currentSrc);
             if (isInShop) {
                 document.querySelectorAll('#shop-grid img').forEach(img => { list.push(img.src); });
+                lightboxWatermarkContext = true;
                 return list;
             }
+            lightboxWatermarkContext = false;
             return [currentSrc];
         }
 
@@ -1135,6 +1366,11 @@
         function updateLightbox() {
             if (!lightboxList.length) return;
             lightboxImg.src = lightboxList[lightboxIndex];
+            const wm = document.getElementById('lightbox-wm');
+            if (wm) {
+                const showWm = lightboxWatermarkContext && needsWatermarkOverlay(lightboxList[lightboxIndex]);
+                wm.classList.toggle('is-hidden', !showWm);
+            }
             const multiple = lightboxList.length > 1;
             lightboxCounter.style.display = multiple ? '' : 'none';
             document.getElementById('lightbox-prev').style.display = multiple ? '' : 'none';
